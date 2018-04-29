@@ -15,6 +15,6 @@ s1.addMember(0, 1)
 s1.addMember(1, 2)
 
 m1 = s1.members[0]
-stiff1 = m1.T.T * m1.k2 * m1.T
+stiff1 = m1.T.T * m1.kframe * m1.T
 
 s1.plot()
