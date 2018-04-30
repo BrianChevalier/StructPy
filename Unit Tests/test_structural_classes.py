@@ -1,4 +1,6 @@
 import unittest
+import sys
+sys.path.append("..")
 import cross_sections as xs
 import structural_classes as sc
 import materials as ma

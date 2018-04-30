@@ -51,7 +51,7 @@ class AISC():
 	def __init__(self, AISCName):		
 		#the database is preserved in the pickleditem.txt file for speed
 		try:
-			data, labels = pxs.unPickleObject('pickleditem.txt')
+			data, labels = pxs.unPickleObject()
 			self.data = data
 			self.labels = labels
 		except:
@@ -63,13 +63,6 @@ class AISC():
 		#index is the row of the shape.
 		index = [i for i, s in enumerate(labels) if AISCName in s]
 		self.row_number = index[0]
-		
-		#find the row of the AISC Shape from the database
-		#for row_num in range(1, 2093):
-		#	row_value = self.sheet2.cell(column=2, row=row_num)
-		#	if row_value.value == AISCName:
-		#		self.row_number = row_num
-		#		break
 		
 		#assign values from the database as properties
 		def item(col):

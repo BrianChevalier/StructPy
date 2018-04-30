@@ -1,1 +1,3 @@
-Structural analysis in python
+Structural Analysis in Python
+
+This library primarily uses the 'Direct Stiffness Method' to solve trusses and frames.

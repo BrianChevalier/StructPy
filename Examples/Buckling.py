@@ -18,3 +18,5 @@ m1 = s1.members[0]
 stiff1 = m1.T.T * m1.kframe * m1.T
 
 s1.plot()
+
+xs1 = xs.AISC('W8X48').printProperties()
