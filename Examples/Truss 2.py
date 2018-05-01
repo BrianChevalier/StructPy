@@ -1,8 +1,13 @@
-from init import *
+import sys
+sys.path.append('..')
+import structural_classes as sc
 import cross_sections as xs
 import materials as ma
 
-s2 = Structure()
+xs1 = xs.Circle(1)
+ma1 = ma.A992()
+
+s2 = sc.Structure(cross=xs1, material=ma1)
 
 # Add nodes to the structure
 s2.addNode(0, 0, xfix=0, yfix=0)

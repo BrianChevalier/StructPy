@@ -2,7 +2,7 @@ import numpy as np
 import math
 import matplotlib.pyplot as plt
 import openpyxl as xl
-import pickle_sections as pxs
+import Resources.pickle_sections as pxs
 
 
 class Section():

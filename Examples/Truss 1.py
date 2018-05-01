@@ -1,3 +1,5 @@
+import sys
+sys.path.append('..')
 import structural_classes as sc
 import cross_sections as xs
 import materials as ma
