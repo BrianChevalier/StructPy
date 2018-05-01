@@ -256,7 +256,7 @@ class Structure(Member, Node):
 	@property
 	def K(self):
 		"""Build global structure stiffness matrix"""
-		K = np.zeros((3*self.nNodes, 3*nNodes))
+		K = np.zeros((3*self.nNodes, 3*self.nNodes))
 		for member in self.members:
 			x1 = member.SN
 			x2 = member.EN
