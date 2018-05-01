@@ -184,7 +184,7 @@ class Member(Node):
 	@property
 	def disp(self):
 		# This just tells the axial displacement numbering
-		# i.e. member 1 has d1, d2, d3,d4 for the start and end nodes
+		# i.e. member 1 has d1, d2, d3, d4 for the start and end nodes
 		return self.SN.d + self.EN.d
 		
 	@property
