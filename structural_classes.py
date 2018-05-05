@@ -104,18 +104,15 @@ class Member(Node):
 		e1 = self.EN.x - self.SN.x
 		e2 = self.EN.y - self.SN.y
 		e3 = self.EN.z - self.SN.z
-		vector = np.array([e1, e2, e3])
-		return vector
+		return np.array([e1, e2, e3])
 		
 	@property
 	def length(self):
-		length = np.linalg.norm(self.vector)
-		return length
+		return np.linalg.norm(self.vector)
 		
 	@property
 	def unVec(self):
-		unVec = self.vector/self.length
-		return unVec
+		return self.vector/self.length
 		
 	@property
 	def axialstiff(self):
@@ -195,29 +192,7 @@ class Member(Node):
 		n = self.EN.n
 		en = [3*n+1, 3*n+2, 3*n+3]
 		return sn + en
-		
-	def bucklingCapacity(self, K):
-		# UNITS: inches, ksi
-		elasticLimit = 4.71 * math.sqrt(self.material.E / self.material.Fy)
-		slenderness = (K * 12 * self.length) / self.cross.ry
-		Fe = (math.pi**2 * self.material.E) / ((K * 12* self.length) / self.cross.ry)**2
-	
-		if slenderness < elasticLimit:
-			Fcr = (0.658**(self.material.Fy / Fe)) * self.material.Fy
-		else:
-			Fcr = 0.877 * Fe
-		
-		print('Elastic Limit %f' % elasticLimit)
-		print('Fe: %f' % Fe)
-		print('Fcr: %f' % Fcr)
-	
-		return 0.9 * Fcr * self.cross.A
-		
-	def Lr(self):
-		a = self.material.E/(0.75 * self.material.Fy)
-		b = self.cross.J/(self.cross.Sx * self.cross.ho)
-		return 1.95 * self.rts * a * sqrt(b + sqrt(b**2 + 6.76 * a**(-2) ))
-		
+				
 		
 class Structure(Member, Node):
 	"""Define structure class"""
@@ -236,19 +211,22 @@ class Structure(Member, Node):
 		
 	@property
 	def K(self):
-		"""Build global structure stiffness matrix"""
+		"""Build global structure stiffness matrix for a truss"""
+		
 		K = np.zeros((self.gDoF, self.gDoF))
+		
 		for member in self.members:
-			x1 = member.SN
-			x2 = member.EN
-			d1 = self.nDoF
-			ds = x1.d + x2.d
+			# this generates the correct numbering for nodal dof
+			SNdof [member.SN.n*2, member.SN.n*2+1]
+			ENdof [member.EN.n*2, member.EN.n*2+1]
+			
+			ds = SNdof + ENdof
 			
 			for index1, i in enumerate(ds):
 				for index2, j in enumerate(ds):
-					#index is used for local numbering
-					#i,j are used for global numbering
-					#this is a local to global transformation
+					# index is used for local numbering
+					# i,j are used for global numbering
+					# this is a local to global transformation
 					K[i,j] += member.k[index1, index2]
 		
 		return np.asmatrix(K)

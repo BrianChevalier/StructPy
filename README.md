@@ -8,7 +8,7 @@ This library primarily uses the 'Direct Stiffness Method' to solve trusses and f
 	* I-Beam
 	* Rectangle
 	* Circle
-	Hollow Circle
+	* Hollow Circle
 * AISC predefined cross sections and properties
 * TODO: Custom shapes based on inputed coordinates (CP3)
 
