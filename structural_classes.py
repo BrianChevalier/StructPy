@@ -80,11 +80,7 @@ class Node():
 		string = '(%.1f, %.1f)'
 		variables = (self.x, self.y)
 		return string % variables
-		
-	@property
-	def d(self):
-		return [self.n*2, self.n*2+1]
-		
+				
 						
 class Member(Node):
 	"""Define Member class"""
@@ -179,10 +175,12 @@ class Member(Node):
 		return np.matrix([v1, v2, v3, v4, v5, v6])
 		
 	@property
-	def disp(self):
+	def trussdof(self):
+		SNdof = [self.SN.n*2, self.SN.n*2+1]
+		ENdof = [self.EN.n*2, self.EN.n*2+1]
 		# This just tells the axial displacement numbering
 		# i.e. member 1 has d1, d2, d3, d4 for the start and end nodes
-		return self.SN.d + self.EN.d
+		return SNdof + ENdof
 		
 	@property
 	def frameDoF(self):
@@ -203,101 +201,8 @@ class Structure(Member, Node):
 		self.nMembers = 0
 		self.nDoF = 2
 		self.defaultcross = cross
-		self.defaultmaterial = material
-		
-	@property
-	def gDoF(self):
-		return self.nNodes * self.nDoF
-		
-	@property
-	def K(self):
-		"""Build global structure stiffness matrix for a truss"""
-		
-		K = np.zeros((self.gDoF, self.gDoF))
-		
-		for member in self.members:
-			# this generates the correct numbering for nodal dof
-			SNdof [member.SN.n*2, member.SN.n*2+1]
-			ENdof [member.EN.n*2, member.EN.n*2+1]
-			
-			ds = SNdof + ENdof
-			
-			for index1, i in enumerate(ds):
-				for index2, j in enumerate(ds):
-					# index is used for local numbering
-					# i,j are used for global numbering
-					# this is a local to global transformation
-					K[i,j] += member.k[index1, index2]
-		
-		return np.asmatrix(K)
-			
-	@property
-	def K(self):
-		"""Build global structure stiffness matrix"""
-		K = np.zeros((3*self.nNodes, 3*self.nNodes))
-		for member in self.members:
-			x1 = member.SN
-			x2 = member.EN
-			ds = x1.frameDoF + x2.frameDoF
-			
-			for index1, i in enumerate(ds):
-				for index2, j in enumerate(ds):
-					#index is used for local numbering
-					#i,j are used for global numbering
-					#this is a local to global transformation
-					K[i,j] += member.kframe[index1, index2]
-		
-		return np.asmatrix(K)
-			
-	@property
-	def d(self):
-		"""Define displacement array"""
-		d = []
-		for i, node in enumerate(self.nodes):
-			x = node.xfix
-			y = node.yfix
-			d.append(x)
-			d.append(y)
-			if self.nDoF == 3:
-				d.append(z)
+		self.defaultmaterial = material		
 				
-		return np.array(d)
-		
-	def directStiffness(self, loading):
-		"""This executes the direct stiffness method 
-		for the structure given some loading"""
-		#rows with displacement
-		index = self.d == 1
-		reducedK = self.K[index,:][:,index]
-		reducedF = loading[index]
-		
-		D = np.linalg.solve(reducedK, reducedF)
-		Dflat = np.asarray(D).flatten()
-				
-		j = 0
-		d2 = []
-		for i, item in enumerate(self.d):
-			if item == 1:
-				d2.append(Dflat[j])
-				j += 1
-			else:
-				d2.append(0)
-		d2 = np.array(d2)
-		
-		for i, node in enumerate(self.nodes):
-			d = node.d
-			node.xdef = d2[d[0]]
-			node.ydef = d2[d[1]]
-		
-		for i, member in enumerate(self.members):
-			l = member.unVec[0]
-			m = member.unVec[1]
-			n = member.unVec[2]
-			ind = member.disp
-			member.axial = member.axialstiff * np.matrix([l, m, -l, -m]) * np.asmatrix(d2[ind]).T
-			
-		return d2
-			
 	def addNode(self, x, y, z=0, cost=0, xfix=1, yfix=1, fixity='free'):
 		"""Add node to the structure"""
 		n = self.nNodes #node number
