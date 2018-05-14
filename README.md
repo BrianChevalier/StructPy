@@ -24,5 +24,5 @@ This library primarily uses the 'Direct Stiffness Method' to solve trusses and f
 
 ### References:
 
-* [Structural Analysis Theory](https://raw.github.com/BrianChevalier/StructPy/blob/master/Documentation/Main.pdf)
+* [Structural Analysis Theory](https://github.com/BrianChevalier/StructPy/blob/master/Documentation/Main.pdf)
 * TODO: Documentation pdf
