@@ -1,0 +1,91 @@
+\documentclass[12pt]{article}
+%------------------------------------------------------------------------------------------
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage[doublespacing]{setspace}
+\usepackage{caption}
+\usepackage{float}
+\usepackage{pdfpages}
+\usepackage{multicol}
+\usepackage{gensymb}
+
+\everymath{\displaystyle}
+
+\usepackage{hyperref}%Make references, clickable links
+\hypersetup{
+    colorlinks,
+    citecolor=black,
+    filecolor=black,
+    linkcolor=black,
+    urlcolor=black
+}
+
+
+%------------------------------------------------------------------------------------------
+\newcommand{\ei}{\vec{e_1}}   %e1 shortcut
+\newcommand{\ej}{\vec{e_2}}   %e2 shortcut
+\newcommand{\ek}{\vec{e_3}}   %e3 shortcut
+\newcommand{\n}{\vec{n}}
+\newcommand{\m}{\vec{m}}
+\newcommand{\x}{\vec{x}}
+
+\newcommand{\sig}{\sigma}       %sigma shortcut
+\newcommand{\ep}{\varepsilon} %epsilon shotcut
+
+\renewcommand{\vec}[1]{\mathbf{#1}} %make vectors bold
+
+
+\newcommand{\beq}{\begin{equation}} %begin equation shortcut
+\newcommand{\eeq}{\end{equation}} %end equation shortcut
+
+\newcommand{\of}[1]{\left(#1\right)} %parenthases shortcuts
+\newcommand{\ofa}[1]{\left[#1\right]} %brackets shotcut
+
+
+%------------------------------------------------------------------------------------------
+%FANCY HEADER COMMANDS
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhead[LO]{STRUCTURAL ANALYSIS}
+\fancyhead[RE]{2016 1698-220}
+
+%------------------------------------------------------------------------------------------
+%TITLE PAGE COMMANDS
+\title{Structural Analysis with the Direct Stiffness Method}
+\author{Brian Chevalier}
+\date{\today}
+
+%------------------------------------------------------------------------------------------
+\begin{document}
+\pagenumbering{gobble}
+\maketitle
+\newpage
+\pagenumbering{arabic}
+
+%------------------------------------------------------------------------------------------
+\tableofcontents
+\newpage
+
+\input{sections/Truss_Stiffness}
+
+
+
+%\includepdf[scale=0.8,pages=1,pagecommand=\section{Appendix A: MatLab Code}]{DOCUMENTTITLE}
+%\includepdf[scale=0.8,pages=2-,pagecommand={}]{DOCUMENTTITLE}
+
+
+%------------------------------------------------------------------------------------------
+%\includepdf[scale=0.8,pages=1,pagecommand=\section{Appendix B: }]{DOCUMENTTITLE}
+%\includepdf[scale=0.8,pages=2-,pagecommand={}]{DOCUMENTTITLE}
+
+
+%------------------------------------------------------------------------------------------
+\newpage
+\bibliography{/Users/BrianBadahdah/Documents/Mendeley/Mechanics}
+\addcontentsline{toc}{section}{References}
+\bibliographystyle{apalike}
+%------------------------------------------------------------------------------------------
+
+%----End of document
+\end{document}
