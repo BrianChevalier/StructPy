@@ -1,7 +1,7 @@
 import sys
-sys.path.append("..")
+#sys.path.append("..")
 import unittest
-import cross_sections as xs
+import StructPy.cross_sections as xs
 
 
 # class name doesn't matter

@@ -1,9 +1,38 @@
 \documentclass[12pt]{article}
+\usepackage[landscape,twocolumn]{geometry}% http://ctan.org/pkg/geometry
 %------------------------------------------------------------------------------------------
+
+% These commands will adjust the two column layout to look a bit better
+% see: http://scholardox.com/pubs/Landscape.pdf
+\usepackage{sectsty}
+\setlength{\textheight}{17cm}
+\setlength{\textwidth}{23cm}
+\setlength{\topmargin}{-2.2cm}
+\setlength{\oddsidemargin}{0.0cm}
+\setlength{\evensidemargin}{\oddsidemargin}
+\setlength{\parskip}{0cm}
+\setlength{\columnsep}{1cm}
+\sectionfont{\normalsize}
+\subsectionfont{\normalsize}
+
+
+%%------------------------------
+%Make background the pdf "bkgd.pdf"
+%\usepackage[pages=all]{background}
+%\backgroundsetup{
+%scale=1,
+%color=black,
+%opacity=1,
+%angle=0,
+%contents={%
+%  \includegraphics[width=\paperwidth,height=\paperheight]{Resources/bkgd.pdf}
+% }
+%}
+
 \usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage{graphicx}
-\usepackage[doublespacing]{setspace}
+\usepackage[singlespacing]{setspace}
 \usepackage{caption}
 \usepackage{float}
 \usepackage{pdfpages}
@@ -42,29 +71,56 @@
 \newcommand{\of}[1]{\left(#1\right)} %parenthases shortcuts
 \newcommand{\ofa}[1]{\left[#1\right]} %brackets shotcut
 
+%%------------------------------
+\usepackage{empheq}
+\usepackage[most]{tcolorbox}
+% Box commands
+\newtcbox{\mymath}[1][]{%
+    nobeforeafter, math upper, tcbox raise base,
+    enhanced, colframe=blue!30!black,
+    colback=blue!30, boxrule=1pt,
+    #1}
+
+\newcommand{\pbox}[1]{\begin{empheq}[box=\mymath]{align*}#1\end{empheq}} %purple box shortcut
 
 %------------------------------------------------------------------------------------------
 %FANCY HEADER COMMANDS
 \usepackage{fancyhdr}
-\pagestyle{fancy}
-\fancyhead[LO]{STRUCTURAL ANALYSIS}
-\fancyhead[RE]{2016 1698-220}
+%\pagestyle{fancy}
+%\fancyhead[LO]{STRUCTURAL ANALYSIS}
+\setlength{\headheight}{15.2pt}
+\fancyhf{}
+\lhead[STRUCTURAL ANALYSIS]{STRUCTURAL ANALYSIS}
 
 %------------------------------------------------------------------------------------------
 %TITLE PAGE COMMANDS
 \title{Structural Analysis with the Direct Stiffness Method}
 \author{Brian Chevalier}
-\date{\today}
+\date{ \today }
 
 %------------------------------------------------------------------------------------------
 \begin{document}
-\pagenumbering{gobble}
-\maketitle
-\newpage
+
 \pagenumbering{arabic}
+\makeatletter
+\@twocolumnfalse
+\maketitle
+\@twocolumntrue
+\makeatother
+\vspace*{\fill}
+\begin{center}
+	\includegraphics[scale=1]{Figures/Notesimg}
+\end{center}
+\vspace*{\fill}
+\newpage
 
 %------------------------------------------------------------------------------------------
-\tableofcontents
+\vspace*{\fill}
+\begin{tcolorbox}[height=0.8\textheight, width=\columnwidth, colframe=gray, colback=lightgray, halign=left, arc=3mm]
+	\tableofcontents
+\end{tcolorbox}
+\vspace*{\fill}
+
 \newpage
 
 \input{sections/Truss_Stiffness}
@@ -82,7 +138,7 @@
 
 %------------------------------------------------------------------------------------------
 \newpage
-\bibliography{/Users/BrianBadahdah/Documents/Mendeley/Mechanics}
+\bibliography{References}
 \addcontentsline{toc}{section}{References}
 \bibliographystyle{apalike}
 %------------------------------------------------------------------------------------------

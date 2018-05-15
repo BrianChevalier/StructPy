@@ -7,3 +7,4 @@
 *.bbl
 *.blg
 *.toc
+/StructPy/__pycache__
