@@ -68,26 +68,71 @@ Next we will put these equations in matrix form in terms of the local coordinate
 
 
 \begin{equation}
-	\begin{bmatrix}
-	-F\\ 0\\ F\\ 0\\
-	\end{bmatrix}
+	\underbrace{
+		\begin{bmatrix}
+			-F\\ 0\\ F\\ 0\\
+		\end{bmatrix}
+	}_{\vec{F}'}
 	=
-	\frac{AE}{L}
-	\begin{bmatrix}
-	1 & 0 & -1 & 0\\
-	0 & 0 & 0 & 0\\
-	-1 & 0 & 1 & 0\\
-	0 & 0 & 0 & 0\\
-	\end{bmatrix}
-	\begin{Bmatrix}
-	u_{1x'}\\ u_{1y'}\\ u_{2x'}\\ u_{2y'}\\
-	\end{Bmatrix}
+	\underbrace{
+		\frac{AE}{L}
+		\begin{bmatrix}
+			1 & 0 & -1 & 0\\
+			0 & 0 & 0 & 0\\
+			-1 & 0 & 1 & 0\\
+			0 & 0 & 0 & 0\\
+		\end{bmatrix}
+	}_{\vec{k}}
+	\underbrace{
+		\begin{Bmatrix}
+			u_{1x'}\\ u_{1y'}\\ u_{2x'}\\ u_{2y'}\\
+		\end{Bmatrix}
+	}_{\vec{u'}}
+	\label{Eq:F=ku}
 \end{equation}
 
 Next, we must take the local element stiffness matrix and derive the global element stiffness matrix.
 
 \subsection{Global Element Stiffness}
 
+Transforming local coordinates to global coordinates is described by the following equation:
+
+\begin{equation}
+	\begin{Bmatrix}
+		u_x\\ u_y
+	\end{Bmatrix}
+	=
+	\underbrace{
+	\begin{bmatrix}
+		\cos\theta & -\sin\theta\\
+		\sin\theta & \cos\theta
+	\end{bmatrix}
+	}_{\vec{R}}
+	\begin{Bmatrix}
+		u_x'\\ u_y'
+	\end{Bmatrix}
+\end{equation}
+
+where $\vec{R}$ is the general rotation matrix. The particular rotation matrix for the two degree of freedom system takes the form:
+
+\begin{equation}
+	\vec{T}
+	=	
+	\begin{bmatrix}
+		\vec{R} & \vec{0}\\
+		\vec{0} & \vec{R}\\
+	\end{bmatrix}
+\end{equation}
+
+Now, we take equation \ref{Eq:F=ku}, and multiply both sides of the equation by the local to global transformation matrix, then solve for the axial forces $\vec{F}'$. Note that the global deformation, $\vec{u}$ is equal to $\vec{T}^\intercal \vec{u}$
+
+\begin{align}
+	\vec{F}' &= \vec{k} \vec{u}'\\
+	\vec{T} \vec{F}' &= \vec{k} \vec{T}^\intercal \vec{u}\\
+	\vec{F}' &= \vec{T} \vec{k} \vec{T}^\intercal \vec{u}
+\end{align}
+
+This gives us the relationship between the global deformation of nodes to the axial force.
 
 \subsection{Global Structural Stiffness}
 
