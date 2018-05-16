@@ -1,38 +1,9 @@
-\documentclass[12pt]{article}
-\usepackage[landscape, twocolumn]{geometry}% http://ctan.org/pkg/geometry
-%------------------------------------------------------------------------------------------
-
-% These commands will adjust the two column layout to look a bit better
-% see: http://scholardox.com/pubs/Landscape.pdf
-\usepackage{sectsty}
-\setlength{\textheight}{17cm}
-\setlength{\textwidth}{23cm}
-\setlength{\topmargin}{-2.2cm}
-\setlength{\oddsidemargin}{0.0cm}
-\setlength{\evensidemargin}{\oddsidemargin}
-\setlength{\parskip}{0cm}
-\setlength{\columnsep}{1cm}
-\sectionfont{\normalsize}
-\subsectionfont{\normalsize}
+\documentclass[landscape, twocolumn, 12pt]{article}
 \usepackage{TitlePage}
-
-%%------------------------------
-%Make background the pdf "bkgd.pdf"
-%\usepackage[pages=all]{background}
-%\backgroundsetup{
-%scale=1,
-%color=black,
-%opacity=1,
-%angle=0,
-%contents={%
-%  \includegraphics[width=\paperwidth,height=\paperheight]{Resources/bkgd.pdf}
-% }
-%}
 
 \usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage{graphicx}
-\usepackage[singlespacing]{setspace}
 \usepackage{caption}
 \usepackage{float}
 \usepackage{pdfpages}
@@ -49,7 +20,6 @@
     linkcolor=black,
     urlcolor=black
 }
-
 
 %------------------------------------------------------------------------------------------
 \newcommand{\ei}{\vec{e_1}}   %e1 shortcut
@@ -84,39 +54,20 @@
 \newcommand{\pbox}[1]{\begin{empheq}[box=\mymath]{align*}#1\end{empheq}} %purple box shortcut
 
 %------------------------------------------------------------------------------------------
-%FANCY HEADER COMMANDS
-\usepackage{fancyhdr}
-%\pagestyle{fancy}
-%\fancyhead[LO]{STRUCTURAL ANALYSIS}
-\setlength{\headheight}{15.2pt}
-\fancyhf{}
-\lhead[STRUCTURAL ANALYSIS]{STRUCTURAL ANALYSIS}
-
-
-%------------------------------------------------------------------------------------------
 \begin{document}
 
 %TITLE PAGE COMMANDS
+
 \title{Structural Analysis with the Direct Stiffness Method}
 \subtitle{Modeling Structural Systems as Springs}
 \subject{CEE321}
+\titleimage{Figures/TitlePageImage}
 \author{Brian Chevalier}
-\date{ \today }
+\date{\today}
 \maketitle
-
-
+\pagenumbering{arabic}
 
 \input{sections/Truss_Stiffness}
-
-
-
-%\includepdf[scale=0.8,pages=1,pagecommand=\section{Appendix A: MatLab Code}]{DOCUMENTTITLE}
-%\includepdf[scale=0.8,pages=2-,pagecommand={}]{DOCUMENTTITLE}
-
-
-%------------------------------------------------------------------------------------------
-%\includepdf[scale=0.8,pages=1,pagecommand=\section{Appendix B: }]{DOCUMENTTITLE}
-%\includepdf[scale=0.8,pages=2-,pagecommand={}]{DOCUMENTTITLE}
 
 
 %------------------------------------------------------------------------------------------
@@ -124,7 +75,5 @@
 \bibliography{References}
 \addcontentsline{toc}{section}{References}
 \bibliographystyle{apalike}
-%------------------------------------------------------------------------------------------
 
-%----End of document
 \end{document}
