@@ -46,7 +46,45 @@ Therefore the axial stiffness from the equation is $\frac{AE}{L}$ for any struct
 \end{align}
 
 \subsection{Local Element Stiffness}
-Each element in a structural system will have its own local element stiffness equations.
+Each element in a structural system will have its own local element stiffness equations. The goal of this section will be to develop the local element stiffness equations for a member in matrix form. Taking the nodal equilibrium from figure \ref{fig:LocalMemberStiffness} becomes:
+
+\begin{align*}
+	-F &= ku_{1x'}\\
+	-F &= ku_{2x'}\\
+\end{align*}
+
+Next we will put these equations in matrix form in terms of the local coordinate system. The equation will take the form:
+
+\begin{equation}
+	\vec{F} = \vec{k} \vec{u}
+\end{equation}
+
+\begin{center}
+	\begin{figure}[h]	\centerline{\includegraphics[width=0.7\columnwidth]{Figures/LocalMemberStiffness}}
+		\caption{Local Member FBDs}
+		\label{fig:LocalMemberStiffness}
+	\end{figure}
+\end{center}
+
+
+\begin{equation}
+	\begin{bmatrix}
+	-F\\ 0\\ F\\ 0\\
+	\end{bmatrix}
+	=
+	\frac{AE}{L}
+	\begin{bmatrix}
+	1 & 0 & -1 & 0\\
+	0 & 0 & 0 & 0\\
+	-1 & 0 & 1 & 0\\
+	0 & 0 & 0 & 0\\
+	\end{bmatrix}
+	\begin{Bmatrix}
+	u_{1x'}\\ u_{1y'}\\ u_{2x'}\\ u_{2y'}\\
+	\end{Bmatrix}
+\end{equation}
+
+Next, we must take the local element stiffness matrix and derive the global element stiffness matrix.
 
 \subsection{Global Element Stiffness}
 
