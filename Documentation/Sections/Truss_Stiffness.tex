@@ -103,9 +103,9 @@ Transforming local coordinates to global coordinates is described by the followi
 	\end{Bmatrix}
 	=
 	\underbrace{
-	\begin{bmatrix}
-		\cos\theta & -\sin\theta\\
-		\sin\theta & \cos\theta
+		\begin{bmatrix}
+			\cos\theta & -\sin\theta\\
+			\sin\theta & \cos\theta
 	\end{bmatrix}
 	}_{\vec{R}}
 	\begin{Bmatrix}
@@ -124,18 +124,61 @@ where $\vec{R}$ is the general rotation matrix. The particular rotation matrix f
 	\end{bmatrix}
 \end{equation}
 
+Note that the values of $\cos\theta$ and $\sin\theta$ can be determined by solving for the $x$ and $y$ component of the element unit vector, respectively. 
+
 Now, we take equation \ref{Eq:F=ku}, and multiply both sides of the equation by the local to global transformation matrix, then solve for the axial forces $\vec{F}'$. Note that the global deformation, $\vec{u}$ is equal to $\vec{T}^\intercal \vec{u}$
 
 \begin{align}
 	\vec{F}' &= \vec{k} \vec{u}'\\
 	\vec{T} \vec{F}' &= \vec{k} \vec{T}^\intercal \vec{u}\\
-	\vec{F}' &= \vec{T} \vec{k} \vec{T}^\intercal \vec{u}
+	\vec{F}' &= \underbrace{\vec{T} \vec{k} \vec{T}^\intercal}_{\vec{k}_{global}} \vec{u}
 \end{align}
 
-This gives us the relationship between the global deformation of nodes to the axial force.
+This gives us the relationship between the global deformation of nodes to the axial force. Enforcing the global nodal boundary conditions will allow solving the system of equations for the member forces. Expanding the equation for $\vec{k}_{global}$ looks like:
+
+\begin{align*}
+\vec{k}_{global}
+=
+\frac{AE}{L}
+	\begin{bmatrix}
+  		c & -s & 0 & 0\\
+  		s & c & 0 & 0\\
+  		0 & 0 & c & -s\\
+  		0 & 0 & s & c\\
+	\end{bmatrix}
+	\begin{bmatrix}
+  		1 & 0 & -1 & 0\\
+  		0 & 0 & 0 & 0\\
+  		-1 & 0 & 1 & 0\\
+  		0 & 0 & 0 & 0\\
+	\end{bmatrix}
+	\begin{bmatrix}
+  		c & s & 0 & 0\\
+  		-s & c & 0 & 0\\
+  		0 & 0 & c & s\\
+  		0 & 0 & -s & c\\
+\end{bmatrix}
+\end{align*}
+
+Therefore the global element stiffness matrix takes the form of:
+
+\begin{equation}
+\vec{k}_{global}
+=
+\frac{AE}{L}
+	\begin{bmatrix}
+  	c^2 & cs & -c^2 & -cs\\
+  	cs & s^2 & -cs & -s^2\\
+  	-c^2 & -cs & c^2 & cs\\
+  	-cs & -s^2 & cs & s^2\\
+	\end{bmatrix}
+\end{equation}
+
+Notice that the $\vec{k}_{global}$ matrix is  symetric about the main diagonal. 
 
 \subsection{Global Structural Stiffness}
 
+Deriving the global structural stiffness matrix for a truss is a matter of combining the global element stiffness matricies.
 
 %Boundary Conditions
 
