@@ -1,0 +1,52 @@
+% Copyright note: This package defines how titles should
+% be typeset at the columbidae University
+% Please check for updates
+\ProvidesPackage{TitlePage}
+\RequirePackage{graphicx}
+\RequirePackage{multicol}
+
+\newcommand*{\subject}[1]{\gdef\@subject{#1}}
+\newcommand*{\@subject}{\texttt{\string\subject} currently not set. Please define this.}
+
+\newcommand*{\subtitle}[1]{\gdef\@subtitle{#1}}
+\newcommand*{\@subtitle}{\texttt{\string\subtitle} currently not set. Please define this.}
+
+\renewcommand*{\maketitle}{%
+
+\begin{titlepage}
+\pagenumbering{arabic}
+\begin{multicols}{2}
+
+\centering
+
+\vspace{2cm}
+
+{\small\bfseries\@subject\unskip\strut\par}
+\vspace{0.5cm}
+{\Large\bfseries\@title\unskip\strut\par}
+\vspace{0.5cm}
+{\large\itshape\@subtitle\unskip\strut\par}
+
+\begin{center}
+	\includegraphics[scale=0.8]{Figures/Notesimg}
+\end{center}
+
+{\scshape\LARGE Arizona State University \par}
+\vspace{0.5cm}
+{\Large\itshape\@author\unskip\strut\par}
+\vspace{0.5cm}
+{\large Updated:\@date\par}
+
+\columnbreak \vspace*{0.1\textheight}
+
+\begin{tcolorbox}[height=0.8\textheight, width=\columnwidth, colframe=gray, colback=lightgray, halign=left, arc=3mm]
+	\tableofcontents
+\end{tcolorbox}
+
+
+\end{multicols}
+
+\end{titlepage}
+
+}
+\endinput

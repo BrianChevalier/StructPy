@@ -1,5 +1,5 @@
 \documentclass[12pt]{article}
-\usepackage[landscape,twocolumn]{geometry}% http://ctan.org/pkg/geometry
+\usepackage[landscape, twocolumn]{geometry}% http://ctan.org/pkg/geometry
 %------------------------------------------------------------------------------------------
 
 % These commands will adjust the two column layout to look a bit better
@@ -14,7 +14,7 @@
 \setlength{\columnsep}{1cm}
 \sectionfont{\normalsize}
 \subsectionfont{\normalsize}
-
+\usepackage{TitlePage}
 
 %%------------------------------
 %Make background the pdf "bkgd.pdf"
@@ -92,36 +92,19 @@
 \fancyhf{}
 \lhead[STRUCTURAL ANALYSIS]{STRUCTURAL ANALYSIS}
 
-%------------------------------------------------------------------------------------------
-%TITLE PAGE COMMANDS
-\title{Structural Analysis with the Direct Stiffness Method}
-\author{Brian Chevalier}
-\date{ \today }
 
 %------------------------------------------------------------------------------------------
 \begin{document}
 
-\pagenumbering{arabic}
-\makeatletter
-\@twocolumnfalse
+%TITLE PAGE COMMANDS
+\title{Structural Analysis with the Direct Stiffness Method}
+\subtitle{Modeling Structural Systems as Springs}
+\subject{CEE321}
+\author{Brian Chevalier}
+\date{ \today }
 \maketitle
-\@twocolumntrue
-\makeatother
-\vspace*{\fill}
-\begin{center}
-	\includegraphics[scale=1]{Figures/Notesimg}
-\end{center}
-\vspace*{\fill}
-\newpage
 
-%------------------------------------------------------------------------------------------
-\vspace*{\fill}
-\begin{tcolorbox}[height=0.8\textheight, width=\columnwidth, colframe=gray, colback=lightgray, halign=left, arc=3mm]
-	\tableofcontents
-\end{tcolorbox}
-\vspace*{\fill}
 
-\newpage
 
 \input{sections/Truss_Stiffness}
 
