@@ -22,6 +22,11 @@ where $F$ is the axial force, $k$ is the axial stiffness, and $u$ is the axial d
 
 where $\sig$ is the stress, $E$ is the modulus of elasticity, and $\ep$ is the strain. Multiplying both sides of the equation by the cross-secional area, $A$, will convert the stress into a force.
 
+\begin{figure}[H]	\centerline{\includegraphics[width=0.5\columnwidth]{Figures/Stress-Strain}}
+	\caption{Stress-Strain Relationship}
+	\label{fig:Stress-Strain}
+\end{figure}
+
 \begin{align}
 	\sig A &= E \ep A\\
 	F & = E \ep A
@@ -130,7 +135,7 @@ Note that the values of $\cos\theta$ and $\sin\theta$ can be determined by solvi
 	\vec{n} = \frac{\vec{x_2}-\vec{x_1}}{||\vec{x_2}-\vec{x_1}||}
 \end{align}
 
-Now, we take equation \ref{Eq:F=ku}, and multiply both sides of the equation by the local to global transformation matrix, then solve for the axial forces $\vec{F}'$. Note that the global deformation, $\vec{u}$ is equal to $\vec{T}^\intercal \vec{u}$
+where $\n$ is the unit vector along the element, and $\x_2$ and $\x_1$ are the coordinates of node 1 and node 2, respectively. Now, we take equation \ref{Eq:F=ku}, and multiply both sides of the equation by the local to global transformation matrix, then solve for the axial forces $\vec{F}'$. Note that the global deformation, $\vec{u}$ is equal to $\vec{T}^\intercal \vec{u}$
 
 \begin{align}
 	\vec{F}' &= \vec{k} \vec{u}'\\
@@ -164,7 +169,7 @@ This gives us the relationship between the global deformation of nodes to the ax
 \end{bmatrix}
 \end{align*}
 
-where $c$ ans $s$ are $\cos\theta$ and $\sin\theta$, respectively. Therefore the global element stiffness matrix takes the form of:
+where $c$ and $s$ are $\cos\theta$ and $\sin\theta$, respectively. Therefore the global element stiffness matrix takes the form of:
 
 \begin{equation}
 \vec{k}_{global}
@@ -184,5 +189,5 @@ Notice that the $\vec{k}_{global}$ matrix is  symetric about the main diagonal.
 
 Deriving the global structural stiffness matrix for a truss is a matter of combining the global element stiffness matricies.
 
-%Boundary Conditions
+\subsection{Boundary Conditions}
 
