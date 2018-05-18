@@ -1,5 +1,5 @@
 # Fdb version 3
-["bibtex Main"] 1526526268 "Main.aux" "Main.bbl" "Main" 1526526271
+["bibtex Main"] 1526526268 "Main.aux" "Main.bbl" "Main" 1526535372
   "/usr/local/texlive/2016/texmf-dist/bibtex/bst/base/apalike.bst" 1292289607 24635 604dafcc79f521a11ea73e506e1fbd98 ""
   "Main.aux" 1526526270 2054 8fc915f8a50f189c53714c8b76bbd68c ""
   "Main.bcf" 0 -1 0 ""
@@ -7,7 +7,7 @@
   (generated)
   "Main.bbl"
   "Main.blg"
-["pdflatex"] 1526526268 "Main.tex" "Main.pdf" "Main" 1526526271
+["pdflatex"] 1526526268 "Main.tex" "Main.pdf" "Main" 1526535372
   "/usr/local/texlive/2016/texmf-dist/fonts/map/fontname/texfonts.map" 1272929888 3287 e6b82fe08f5336d4d5ebc73fb1152e87 ""
   "/usr/local/texlive/2016/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex7.tfm" 1246382020 1004 54797486969f23fa377b128694d548df ""
   "/usr/local/texlive/2016/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex8.tfm" 1246382020 988 bdf658c3bfc2d96d3c8b02cfc1c94c20 ""
@@ -217,7 +217,7 @@
   "Main.tex" 1526525085 2210 e48ab882548afbb99ddda2efe93ce570 ""
   "Main.toc" 1526526270 568 304d787e7f775f9b2a81cd58a4c36166 ""
   "TitlePage.sty" 1526437144 2007 807fca8846b6260e799f76fe0bda181e ""
-  "sections/Truss_Stiffness.tex" 1526526266 6155 99b344cf914774671fa702eb6e1a50d4 ""
+  "sections/Truss_Stiffness.tex" 1526526275 6155 99b344cf914774671fa702eb6e1a50d4 ""
   (generated)
   "Main.log"
   "Main.out"

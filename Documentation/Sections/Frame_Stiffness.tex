@@ -1,0 +1,20 @@
+\section{Frame Direct Stiffness Method}
+The \textit{Direct Stiffness Method} extends solving statically indeterminate frames. Each node in a frame has three degrees of freedom in comparison to two degrees of freedom for a truss. The additional degree of freedom is the rotation at each node. The local and global rotation will be equal.
+
+\subsection{Global Element Stiffness}
+
+The global transformation matrix is:
+\begin{equation}
+	\begin{Bmatrix}
+		u_x\\ u_y\\ \theta
+	\end{Bmatrix}
+	=
+	\begin{bmatrix}
+		\cos\theta & -\sin\theta & 0\\
+		\sin\theta & \cos\theta & 0\\
+		0 & 0 & 1
+	\end{bmatrix}
+	\begin{Bmatrix}
+		u_x'\\ u_y'\\ \theta'
+	\end{Bmatrix}
+\end{equation}

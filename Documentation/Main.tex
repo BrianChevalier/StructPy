@@ -7,7 +7,6 @@
 \usepackage{caption}
 \usepackage{float}
 \usepackage{pdfpages}
-\usepackage{multicol}
 \usepackage{gensymb}
 
 \everymath{\displaystyle}
@@ -57,6 +56,11 @@
 \setlength{\intextsep}{2.0 pt plus 2.0pt minus 2.0pt}
 \setlength{\belowcaptionskip}{-20pt}
 
+
+% This provides the "strip" command which allows an equation to be one column.
+% Note figures and tables can span both columns by adding a "*"
+\usepackage{cuted}
+
 %------------------------------------------------------------------------------------------
 \begin{document}
 
@@ -72,6 +76,8 @@
 \pagenumbering{arabic}
 
 \input{sections/Truss_Stiffness}
+\input{sections/Beam_Stiffness}
+\input{sections/Frame_Stiffness}
 
 
 %------------------------------------------------------------------------------------------
