@@ -11,10 +11,10 @@ The \textit{Direct Stiffness Method} is a \textit{Finite Element Method} of anal
 Members in a truss are modelled as springs with only axial deformation. The axial force in the spring is modelled by Hooke's law:
 
 \begin{equation}
-	F = k u
+	N = k u
 \end{equation}
 
-where $F$ is the axial force, $k$ is the axial stiffness, and $u$ is the axial deformation. To define the axial stiffness we will look at a member of constant cross-secitonal area with only elastic deformation. The stress in such a member is defined by the stress-strain relationship:
+where $N$ is the axial force, $k$ is the axial stiffness, and $u$ is the axial deformation. To define the axial stiffness we will look at a member of constant cross-secitonal area with only elastic deformation. The stress in such a member is defined by the stress-strain relationship:
 
 \begin{equation}
 	\sig = E \ep
@@ -29,7 +29,7 @@ where $\sig$ is the stress, $E$ is the modulus of elasticity, and $\ep$ is the s
 
 \begin{align}
 	\sig A &= E \ep A\\
-	F & = E \ep A
+	N & = E \ep A
 \end{align}
 
 The engineering definition of strain will be used here. Strain is defined as:
@@ -41,27 +41,27 @@ The engineering definition of strain will be used here. Strain is defined as:
 where $L$ is the original length of the member and $\Delta L$ is the change in length of the member. Then substituting in the definition of engineering strain into the previous equation:
 
 \begin{align}
-	F & = EA \frac{u}{L}
+	N & = EA \frac{u}{L}
 \end{align}
 
 Therefore the axial stiffness from the equation is $\frac{AE}{L}$ for any structural member. The axial force of a structural element can be rewritten as:
 
 \begin{align}
-	F & = \frac{AE}{L} u
+	N & = \frac{AE}{L} u
 \end{align}
 
 \subsection{Local Element Stiffness}
 Each element in a structural system will have its own local element stiffness equations. The goal of this section will be to develop the local element stiffness equations for a member in matrix form. Taking the nodal equilibrium from figure \ref{fig:LocalMemberStiffness} becomes:
 
 \begin{align*}
-	-F &= ku_{1x'}\\
-	-F &= ku_{2x'}\\
+	-N &= ku_{1x'}\\
+	-N &= ku_{2x'}\\
 \end{align*}
 
 Next we will put these equations in matrix form in terms of the local coordinate system. The equation will take the form:
 
 \begin{equation}
-	\vec{F} = \vec{k} \vec{u}
+	\vec{N} = \vec{k} \vec{u}
 \end{equation}
 
 \begin{center}
@@ -75,9 +75,9 @@ Next we will put these equations in matrix form in terms of the local coordinate
 \begin{equation}
 	\underbrace{
 		\begin{bmatrix}
-			-F\\ 0\\ F\\ 0\\
+			-N\\ 0\\ \hline N\\ 0\\
 		\end{bmatrix}
-	}_{\vec{F}'}
+	}_{\vec{N}'}
 	=
 	\underbrace{
 		\frac{AE}{L}
@@ -90,7 +90,7 @@ Next we will put these equations in matrix form in terms of the local coordinate
 	}_{\vec{k}}
 	\underbrace{
 		\begin{Bmatrix}
-			u_{1x'}\\ u_{1y'}\\ u_{2x'}\\ u_{2y'}\\
+			u_{1x'}\\ u_{1y'}\\ \hline u_{2x'}\\ u_{2y'}\\
 		\end{Bmatrix}
 	}_{\vec{u'}}
 	\label{Eq:F=ku}
@@ -135,12 +135,12 @@ Note that the values of $\cos\theta$ and $\sin\theta$ can be determined by solvi
 	\vec{n} = \frac{\vec{x_2}-\vec{x_1}}{||\vec{x_2}-\vec{x_1}||}
 \end{align}
 
-where $\n$ is the unit vector along the element, and $\x_2$ and $\x_1$ are the coordinates of node 1 and node 2, respectively. Now, we take equation \ref{Eq:F=ku}, and multiply both sides of the equation by the local to global transformation matrix, then solve for the axial forces $\vec{F}'$. Note that the global deformation, $\vec{u}$ is equal to $\vec{T}^\intercal \vec{u}$
+where $\n$ is the unit vector along the element, and $\x_2$ and $\x_1$ are the coordinates of node 1 and node 2, respectively. Now, we take equation \ref{Eq:F=ku}, and multiply both sides of the equation by the local to global transformation matrix, then solve for the axial forces $\vec{N}'$. Note that the global deformation, $\vec{u}$ is equal to $\vec{T}^\intercal \vec{u}$
 
 \begin{align}
-	\vec{F}' &= \vec{k} \vec{u}'\\
-	\vec{T} \vec{F}' &= \vec{k} \vec{T}^\intercal \vec{u}\\
-	\vec{F}' &= \underbrace{\vec{T} \vec{k} \vec{T}^\intercal}_{\vec{k}_{global}} \vec{u}
+	\vec{N}' &= \vec{k} \vec{u}'\\
+	\vec{T} \vec{N}' &= \vec{k} \vec{T}^\intercal \vec{u}\\
+	\vec{N}' &= \underbrace{\vec{T} \vec{k} \vec{T}^\intercal}_{\vec{k}_{global}} \vec{u}
 \end{align}
 
 This gives us the relationship between the global deformation of nodes to the axial force. Enforcing the global nodal boundary conditions will allow solving the system of equations for the member forces. Expanding the equation for $\vec{k}_{global}$ looks like:

@@ -18,3 +18,26 @@ The global transformation matrix is:
 		u_x'\\ u_y'\\ \theta'
 	\end{Bmatrix}
 \end{equation}
+
+
+\begin{align}
+	\begin{Bmatrix}
+		N_0\\ V_0\\ M_0\\ \hline N_L\\ V_L\\ M_L
+	\end{Bmatrix}
+	=
+	\left[
+	\begin{array}{c|cc|c|cc}
+		e & 0 & 0 & -e & 0 & 0\\ \hline
+		0 & a & b & 0 & -a & b\\
+		0 & b & c & 0 & -b & d\\ \hline
+		-e & 0 & 0 & e & 0 & 0\\ \hline
+		0 & -a & -b & 0 & a & -b\\
+		0 & b & d & 0 & -b & c
+	\end{array}
+	\right]
+	\begin{Bmatrix}
+		u_0\\ w_0\\ \theta_0\\ \hline u_L\\ w_L\\ \theta_L
+	\end{Bmatrix}
+\end{align}
+
+

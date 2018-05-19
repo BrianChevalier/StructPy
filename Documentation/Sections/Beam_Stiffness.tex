@@ -17,6 +17,30 @@ We will isolate each degree of freedom by applying boundary conditions at each n
 \end{figure}
 
 \begin{align*}
-	w_1=0 & \text{	} \theta_1=?\\
-	w_2=0 &\text{	}  \theta_2=0
+	w_0=0 & \text{	} \theta_0=?\\
+	w_L=0 &\text{	}  \theta_L=0
 \end{align*}
+
+\begin{center}
+	\begin{tabular}{cccc}
+		$a=\frac{12EI}{L^3}$ & $b=\frac{6EI}{L^2}$ & $c=\frac{4EI}{L}$ & $d=\frac{2EI}{L}$
+	\end{tabular}
+\end{center}
+
+The global element stiffness matrix for a beam is therefore:
+\begin{align}
+	\begin{Bmatrix}
+		V_0\\ M_0\\ \hline V_L\\ M_L
+	\end{Bmatrix}
+	=
+	\begin{bmatrix}
+		a & b & -a & b\\
+		b & c & -b & d\\
+		-a & -b & a & -b\\
+		b & d & -b & c
+	\end{bmatrix}
+	\begin{Bmatrix}
+		w_0\\ \theta_0\\ \hline w_L\\ \theta_L
+	\end{Bmatrix}
+\end{align}
+
