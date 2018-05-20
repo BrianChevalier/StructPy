@@ -1,5 +1,5 @@
-import structural_classes as sc
-import cross_sections as xs
+from StructPy import structural_classes as sc
+from StructPy import cross_sections as xs
 import materials as ma
 import numpy as np
 

@@ -1,13 +1,12 @@
-import cross_sections as xs
-import materials as ma
+from StructPy import cross_sections as xs
+from StructPy import materials as ma
 import matplotlib.pyplot as plt
 import numpy as np
 import math
 
-
 class Node():
 	"""Define node class"""
-	def __init__(self, x, y, z=0, n=0, cost=0, fixity='free'):
+	def __init__(self, x, y, z=0, n=None, cost=0, fixity='free'):
 		self.x = x
 		self.y = y
 		self.z = z
@@ -171,10 +170,10 @@ class Structure(Member, Node):
 		self.defaultcross = cross
 		self.defaultmaterial = material		
 				
-	def addNode(self, x, y, z=0, cost=0, xfix=1, yfix=1, fixity='free'):
+	def addNode(self, x, y, z=0, cost=0, fixity='free'):
 		"""Add node to the structure"""
 		n = self.nNodes #node number
-		self.nodes.append(Node(x, y, z, n, cost, xfix, yfix, fixity))
+		self.nodes.append(Node(x, y, z=z, n=n, cost=cost, fixity=fixity))
 		self.nNodes += 1
 		
 		if z !=0:

@@ -4,7 +4,6 @@ import cross_sections as xs
 import structural_classes as sc
 import materials as ma
 
-
 xs1 = xs.generalSection(A=30, Ix=700)
 
 s1 = sc.Structure(xs1, ma.Steel(E=29000))

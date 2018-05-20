@@ -1,8 +1,9 @@
 import sys
 sys.path.append('..')
-import structural_classes as sc
-import cross_sections as xs
-import materials as ma
+import StructPy.cross_sections as xs
+import StructPy.structural_classes as sc
+import StructPy.cross_sections as xs
+import StructPy.materials as ma
 
 # Define material
 A992 = ma.A992()
@@ -15,10 +16,10 @@ xs1 = xs.IBeam(1, 1, 0.1, 0.1)
 s1 = sc.Structure(cross=xs1, material=A992)
 
 # Add nodes to the structure
-s1.addNode(0, 0, xfix=0, yfix=0, fixity='pin')
-s1.addNode(2, 0, yfix=0, fixity='roller')
+s1.addNode(0, 0, fixity='pin')
+s1.addNode(2, 0, fixity='roller')
 s1.addNode(1, 1)
-	
+
 # Add members to the structure
 s1.addMember(0, 1)
 s1.addMember(1, 2)

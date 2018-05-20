@@ -10,3 +10,5 @@
 /StructPy/__pycache__
 *.fdb_latexmk
 *.fls
+.vscode/settings.json
+*.pyc
