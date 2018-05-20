@@ -8,5 +8,3 @@
 *.blg
 *.toc
 /StructPy/__pycache__
-*.fdb_latexmk
-*.fls

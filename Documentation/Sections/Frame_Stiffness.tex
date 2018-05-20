@@ -19,6 +19,7 @@ The global transformation matrix is:
 	\end{Bmatrix}
 \end{equation}
 
+Combining the \textit{local} element stiffness matricies for both a beam element and truss element yields:
 
 \begin{align}
 	\begin{Bmatrix}
@@ -40,4 +41,31 @@ The global transformation matrix is:
 	\end{Bmatrix}
 \end{align}
 
+\newpage
 
+
+
+\begin{strip}
+The global element stiffness matrix for a frame element is then:
+	\begin{equation}
+		\begin{Bmatrix}
+			N_0\\ V_0\\ M_0\\ \hline N_L\\ V_L\\ M_L
+		\end{Bmatrix}
+	=
+	\underbrace{
+		\left[
+		\begin{array}{c|cc|c|cc}
+			am^2 + el^2&-alm + elm&-bm&-am^2 - el^2&alm - elm&-bm\\ \hline
+			-alm + elm&al^2 + em^2&bl&alm - elm&-al^2 - em^2&bl\\
+			-bm&bl&c&bm&-bl&d\\ \hline
+			-am^2 - el^2&alm - elm&bm&am^2 + el^2&-alm + elm&bm\\ \hline
+			alm - elm&-al^2 - em^2&-bl&-alm + elm&al^2 + em^2&-bl\\
+			-bm&bl&d&bm&-bl&c\\
+		\end{array}
+		\right]
+		}_{\displaystyle{\vec{k}_{global}^{frame}}}
+		\begin{Bmatrix}
+			u_0\\ w_0\\ \theta_0\\ \hline u_L\\ w_L\\ \theta_L
+		\end{Bmatrix}
+	\end{equation}
+\end{strip}

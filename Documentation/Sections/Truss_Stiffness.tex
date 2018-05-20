@@ -74,9 +74,9 @@ Next we will put these equations in matrix form in terms of the local coordinate
 
 \begin{equation}
 	\underbrace{
-		\begin{bmatrix}
+		\begin{Bmatrix}
 			-N\\ 0\\ \hline N\\ 0\\
-		\end{bmatrix}
+		\end{Bmatrix}
 	}_{\vec{N}'}
 	=
 	\underbrace{
@@ -144,16 +144,16 @@ where $\n$ is the unit vector along the element, and $\x_2$ and $\x_1$ are the c
 \end{align}
 
 This gives us the relationship between the global deformation of nodes to the axial force. Enforcing the global nodal boundary conditions will allow solving the system of equations for the member forces. Expanding the equation for $\vec{k}_{global}$ looks like:
-
+\begin{strip}
 \begin{align*}
 \vec{k}_{global}
 =
 \frac{AE}{L}
 	\begin{bmatrix}
-  		c & -s & 0 & 0\\
-  		s & c & 0 & 0\\
-  		0 & 0 & c & -s\\
-  		0 & 0 & s & c\\
+  		l & -m & 0 & 0\\
+  		m & l & 0 & 0\\
+  		0 & 0 & l & -m\\
+  		0 & 0 & m & l\\
 	\end{bmatrix}
 	\begin{bmatrix}
   		1 & 0 & -1 & 0\\
@@ -162,24 +162,25 @@ This gives us the relationship between the global deformation of nodes to the ax
   		0 & 0 & 0 & 0\\
 	\end{bmatrix}
 	\begin{bmatrix}
-  		c & s & 0 & 0\\
-  		-s & c & 0 & 0\\
-  		0 & 0 & c & s\\
-  		0 & 0 & -s & c\\
+  		l & m & 0 & 0\\
+  		-m & l & 0 & 0\\
+  		0 & 0 & l & m\\
+  		0 & 0 & -m & l\\
 \end{bmatrix}
 \end{align*}
+\end{strip}
 
-where $c$ and $s$ are $\cos\theta$ and $\sin\theta$, respectively. Therefore the global element stiffness matrix takes the form of:
+where $l$ and $m$ are $\cos\theta$ and $\sin\theta$, respectively. Therefore the global element stiffness matrix takes the form of:
 
 \begin{equation}
 \vec{k}_{global}
 =
 \frac{AE}{L}
 	\begin{bmatrix}
-  	c^2 & cs & -c^2 & -cs\\
-  	cs & s^2 & -cs & -s^2\\
-  	-c^2 & -cs & c^2 & cs\\
-  	-cs & -s^2 & cs & s^2\\
+  	l^2 & lm & -l^2 & -lm\\
+  	lm & m^2 & -lm & -m^2\\
+  	-l^2 & -lm & l^2 & lm\\
+  	-lm & -m^2 & lm & m^2\\
 	\end{bmatrix}
 \end{equation}
 

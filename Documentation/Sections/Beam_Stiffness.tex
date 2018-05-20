@@ -11,7 +11,7 @@ A beam element has four degrees of freedom. Two degrees of freedom at each node 
 
 We will isolate each degree of freedom by applying boundary conditions at each node, such that each beam will only have one unrestrained kinematic unknown. Figure \ref{fig:BCFrame} shows the various boundary conditions that will be used to determine the beam bending stiffness. This will allow us to derive the force-displacement relationship necessary to solve the beam.
 
-\begin{figure}[H]	\centerline{\includegraphics[width=0.9\columnwidth]{Figures/BCFrame}}
+\begin{figure}[H]	\centerline{\includegraphics[width=0.8\columnwidth]{Figures/BCFrame}}
 	\caption{Beam Boundary Conditions}
 	\label{fig:BCFrame}
 \end{figure}
@@ -20,6 +20,8 @@ We will isolate each degree of freedom by applying boundary conditions at each n
 	w_0=0 & \text{	} \theta_0=?\\
 	w_L=0 &\text{	}  \theta_L=0
 \end{align*}
+
+The following variables will be used for notational conveninece when defining the beam stiffness matrix.
 
 \begin{center}
 	\begin{tabular}{cccc}
@@ -33,12 +35,14 @@ The global element stiffness matrix for a beam is therefore:
 		V_0\\ M_0\\ \hline V_L\\ M_L
 	\end{Bmatrix}
 	=
-	\begin{bmatrix}
+	\left[
+	\begin{array}{cc|cc}
 		a & b & -a & b\\
-		b & c & -b & d\\
+		b & c & -b & d\\ \hline
 		-a & -b & a & -b\\
 		b & d & -b & c
-	\end{bmatrix}
+	\end{array}
+	\right]
 	\begin{Bmatrix}
 		w_0\\ \theta_0\\ \hline w_L\\ \theta_L
 	\end{Bmatrix}
