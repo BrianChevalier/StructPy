@@ -173,6 +173,11 @@ class Member(Node):
 		v6 = [0,  0, 0, 0,  0, 1]
 		
 		return np.matrix([v1, v2, v3, v4, v5, v6])
+
+	@property
+	def kframeglobal(self):
+		"""Define the global stiffness matrix for a frame element"""
+		
 		
 	@property
 	def trussdof(self):
