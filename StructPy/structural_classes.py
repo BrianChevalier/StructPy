@@ -7,16 +7,12 @@ import math
 
 class Node():
 	"""Define node class"""
-	def __init__(self, x, y, z=0, n=0, cost=0, xfix=1, yfix=1, fixity='free'):
+	def __init__(self, x, y, z=0, n=0, cost=0, fixity='free'):
 		self.x = x
 		self.y = y
 		self.z = z
 		self.cost = cost
 		self.n = n #nodal number
-		
-		#to be removed.
-		self.xfix = xfix
-		self.yfix = yfix
 		
 		# Assign boundary conditions
 		# N: normal force
@@ -27,54 +23,29 @@ class Node():
 		# theta: rotation (rate of change of w)
 		
 		if fixity == 'free':
-			self.N = 0
-			self.V = 0
-			self.M = 0
-			self.u = 1
+			self.xfix = 1
+			self.yfix = 1
 			self.theta = 1
-			self.w = 1
 		elif fixity == 'fixed':
-			self.N = 1
-			self.V = 1
-			self.M = 1
-			self.u = 0
+			self.xfix = 0
+			self.yfix = 0
 			self.theta = 0
-			self.w = 0
 		elif fixity == 'pin':
-			self.N = 1
-			self.V = 1
-			self.M = 0
-			self.u = 0
+			self.xfix = 0
+			self.yfix = 0
 			self.theta = 1
-			self.w = 0
 		elif fixity == 'wallslider':
-			self.N = 1
-			self.V = 0
-			self.M = 0
-			self.u = 0
-			self.theta = 1
-			self.w = 1
+			self.xfix = 0
+			self.yfix = 1
+			self.theta = 0
 		elif fixity == 'roller':
-			self.N = 0
-			self.V = 1
-			self.M = 0
-			self.u = 1
+			self.xfix = 1
+			self.yfix = 0
 			self.theta = 1
-			self.w = 0
 		elif fixity == 'cont':
-			self.N = 1
-			self.V = 1
-			self.M = 1
-			self.u = 1
+			self.xfix = 1
+			self.yfix = 0
 			self.theta = 1
-			self.w = 0
-		
-		#This is the displacement of the node
-		#these have to be solved for
-		# TO DELETE
-		self.xdef = 0
-		self.ydef = 0
-		self.zdef = 0
 		
 	def __str__(self):
 		string = '(%.1f, %.1f)'
@@ -111,29 +82,21 @@ class Member(Node):
 		return self.vector/self.length
 		
 	@property
-	def axialstiff(self):
-		"""This defines the member axial stiffness for the direct stiffness method"""
-		return (self.cross.A * self.material.E)/self.length
-		
-	@property
-	def bendingstiff(self):
-		return (self.material.E*self.cross.I)/self.length**3
-		
-	@property
-	def torsionstiff(self):
-		return (self.G*self.J)/self.length
-		
-	@property
 	def k(self):
 		"""Global member stiffness matrix for truss"""
 		# direct stiffness method
 		l = self.unVec[0]
 		m = self.unVec[1]
 		n = self.unVec[2]
+
+		L = self.length
+		E = self.material.E
+		A = self.cross.A
+		a = (A*E)/L
 		
 		T = np.matrix([[l, m, 0, 0], [0, 0, l, m]])
 		k = np.matrix([[1, -1], [-1, 1]])
-		k = self.axialstiff * (T.T * k * T)
+		k = a * (T.T * k * T)
 		return k
 		
 	@property
@@ -177,7 +140,7 @@ class Member(Node):
 	@property
 	def kframeglobal(self):
 		"""Define the global stiffness matrix for a frame element"""
-		
+		return self.T * self.kframe * self.T.T
 		
 	@property
 	def trussdof(self):
