@@ -1,5 +1,5 @@
-import sys
-sys.path.append('..')
+#import sys
+#sys.path.append('..')
 import StructPy.cross_sections as xs
 import StructPy.structural_classes as sc
 import StructPy.cross_sections as xs
