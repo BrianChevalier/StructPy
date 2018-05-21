@@ -12,3 +12,15 @@
 *.fls
 .vscode/settings.json
 *.pyc
+*.egg-info/
+*.egg
+dist/StructPy-0.1-py3.6.egg
+StructPy.egg-info/top_level.txt
+StructPy.egg-info/not-zip-safe
+StructPy.egg-info/PKG-INFO
+StructPy.egg-info/PKG-INFO
+StructPy.egg-info/PKG-INFO
+StructPy.egg-info/SOURCES.txt
+StructPy.egg-info/SOURCES.txt
+StructPy.egg-info/dependency_links.txt
+StructPy.egg-info/requires.txt
