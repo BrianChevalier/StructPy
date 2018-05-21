@@ -11,7 +11,8 @@ class TestCross(unittest.TestCase):
 		xs1 = xs.Rectangle(2, 2)
 		self.assertEqual(xs1.A, 2*2)
 		
-		#test what happens when you update
+		# test what happens when you update
+		# derived properties should dynamically be recalculated
 		xs1.h = 3
 		xs1.b = 3
 		

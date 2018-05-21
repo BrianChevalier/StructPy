@@ -1,0 +1,6 @@
+language: python
+python:
+  - "3.6"
+  
+script:
+  - cd Unit\ Tests && python test_cross_sections.py
