@@ -1,5 +1,7 @@
 # Structural Analysis in Python
 
+[![Build Status](https://travis-ci.org/BrianChevalier/StructPy.svg?branch=master)](https://travis-ci.org/BrianChevalier/StructPy)
+
 This library primarily uses the 'Direct Stiffness Method' to solve trusses and frames.
 
 ### Cross Sections Library:
