@@ -1,9 +1,7 @@
-import sys
-sys.path.append('..')
-import structural_classes as sc
-import cross_sections as xs
-import materials as ma
-import Truss
+import StructPy.cross_sections as xs
+import StructPy.structural_classes as sc
+import StructPy.materials as ma
+import StructPy.Truss as Truss
 
 # Define material
 A992 = ma.A992()
@@ -17,9 +15,9 @@ xs1 = xs.generalSection(A=1)
 s1 = Truss.Truss(cross=xs1, material=A992)
 
 # Add nodes to the structure
-s1.addNode(0, 0, xfix=0, yfix=0)
+s1.addNode(0, 0, fixity='pin')
 s1.addNode(3, 4)
-s1.addNode(6, 0, xfix=0, yfix=0)
+s1.addNode(6, 0, fixity='pin')
 
 # Add members to the structure
 s1.addMember(0, 1)

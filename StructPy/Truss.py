@@ -1,6 +1,6 @@
 from StructPy import structural_classes as sc
 from StructPy import cross_sections as xs
-import materials as ma
+from StructPy import materials as ma
 import numpy as np
 
 import decimal
@@ -64,7 +64,10 @@ class Truss(sc.Structure):
 			m = member.unVec[1]
 			n = member.unVec[2]
 			ind = member.trussdof
-			member.axial = member.axialstiff * np.matrix([l, m, -l, -m]) * np.asmatrix(d[ind]).T
+			A = member.cross.A
+			E = member.material.E
+			L = member.length
+			member.axial = (A*E)/L * np.matrix([l, m, -l, -m]) * np.asmatrix(d[ind]).T
 			
 		return d
 		
