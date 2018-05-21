@@ -1,9 +1,7 @@
 import unittest
-import sys
-sys.path.append("..")
-import cross_sections as xs
-import structural_classes as sc
-import materials as ma
+import StructPy.cross_sections as xs
+import StructPy.structural_classes as sc
+import StructPy.materials as ma
 import numpy as np
 
 # class name doesn't matter
@@ -15,8 +13,8 @@ class Struct_Classes(unittest.TestCase):
 		xs1 = xs.Rectangle(2, 2)
 		A992 = ma.A992()
 		s1 = sc.Structure(cross=xs1, material=A992)
-		s1.addNode(0, 0, xfix=0, yfix=0)
-		s1.addNode(2, 0, yfix=0)
+		s1.addNode(0, 0, fixity='pin')
+		s1.addNode(2, 0, fixity='roller')
 		s1.addNode(1, 1)
 		s1.addMember(0, 1)
 		s1.addMember(1, 2)

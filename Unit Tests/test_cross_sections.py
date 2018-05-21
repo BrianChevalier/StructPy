@@ -1,5 +1,3 @@
-import sys
-#sys.path.append("..")
 import unittest
 import StructPy.cross_sections as xs
 

@@ -45,6 +45,8 @@ class Node():
 			self.xfix = 1
 			self.yfix = 0
 			self.theta = 1
+		else:
+			raise ValueError('Support type undefined. Please use a valid support.')
 		
 	def __str__(self):
 		string = '(%.1f, %.1f)'
@@ -161,14 +163,18 @@ class Member(Node):
 		
 class Structure(Member, Node):
 	"""Define structure class"""
-	def __init__(self, cross, material):
+	def __init__(self, cross=None, material=None):
 		self.members = []
 		self.nodes = []
 		self.nNodes = 0
 		self.nMembers = 0
 		self.nDoF = 2
-		self.defaultcross = cross
-		self.defaultmaterial = material		
+		
+		if cross == None or material == None:
+			raise ValueError('Please define default cross section or material type.')
+		else:	
+			self.defaultcross = cross
+			self.defaultmaterial = material		
 				
 	def addNode(self, x, y, z=0, cost=0, fixity='free'):
 		"""Add node to the structure"""
