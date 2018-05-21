@@ -13,4 +13,4 @@ setup(name='StructPy',
           'numpy',
           'matplotlib'],
       zip_safe=False,
-      packages=['StructPy'])
+      packages=['StructPy', 'Resources'])
