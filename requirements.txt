@@ -1,1 +1,3 @@
 openpyxl
+matplotlib
+numpy

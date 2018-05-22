@@ -5,6 +5,8 @@ sudo: false
 script:
 - python setup.py install
 - cd Unit\ Tests && python test_cross_sections.py
+- python unittest discover -p '*_tests.py'
+
 notifications:
   pushover:
     api_key:
