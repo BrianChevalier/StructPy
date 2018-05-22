@@ -39,7 +39,7 @@ class Struct_Classes(unittest.TestCase):
 		Forces = np.matrix('0; 0; 100; 100; 0; 0')
 		self.s1.directStiffness(Forces)
 		#this should be a zero force member
-		self.assertAlmostEqual(self.s1.members[1].axial[0, 0], 0)
+		self.assertAlmostEqual(self.s1.members[1].axial[0], 0)
 		
 	def test_Frame(self):
 		
