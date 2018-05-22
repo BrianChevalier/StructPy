@@ -1,8 +1,9 @@
-# Structural Analysis in Python
+<h1 align="center">Structural Analysis in Python</h1>
 
 <p align="center">
-<img src="https://travis-ci.org/BrianChevalier/StructPy.svg?branch=master" alt="Build Status">
-<img src="https://img.shields.io/npm/l/express.svg?style=plastic" alt="MIT License">
+<img src="./Documentation/Figures/Logo.pdf" alt="Project Logo">
+<img src="https://travis-ci.org/BrianChevalier/StructPy.svg?branch=master" alt="Build Status Badge">
+<img src="https://img.shields.io/npm/l/express.svg" alt="MIT License Badge">
 </p>
 
 This library primarily uses the 'Direct Stiffness Method' to solve trusses and frames.
@@ -27,5 +28,4 @@ This library primarily uses the 'Direct Stiffness Method' to solve trusses and f
 
 ### References:
 
-* [Structural Analysis Theory](https://github.com/BrianChevalier/StructPy/blob/master/Documentation/Main.pdf)
-* TODO: Documentation pdf
+* [Structural Analysis Theory and Derivations](https://github.com/BrianChevalier/StructPy/blob/master/Documentation/Main.pdf)
