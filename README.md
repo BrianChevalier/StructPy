@@ -4,6 +4,7 @@
 <h1 align="center">Structural Analysis in Python</h1>
 <p align="center">
 <img src="https://travis-ci.org/BrianChevalier/StructPy.svg?branch=master" alt="Build Status Badge">
+<img src="https://img.shields.io/badge/python-3.6-brightgreen.svg" alt="Compatibility badge">
 <img src="https://img.shields.io/npm/l/express.svg" alt="MIT License Badge">
 </p>
 
