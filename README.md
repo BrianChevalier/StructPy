@@ -2,7 +2,7 @@
 <img src="./Documentation/Figures/Logo.svg" alt="Project Logo">
 </p>
 <h1 align="center">Structural Analysis in Python</h1>
-<p align"center">
+<p align="center">
 <img src="https://travis-ci.org/BrianChevalier/StructPy.svg?branch=master" alt="Build Status Badge">
 <img src="https://img.shields.io/npm/l/express.svg" alt="MIT License Badge">
 </p>
