@@ -1,6 +1,9 @@
 # Structural Analysis in Python
 
+<p align="center">
 [![Build Status](https://travis-ci.org/BrianChevalier/StructPy.svg?branch=master)](https://travis-ci.org/BrianChevalier/StructPy)
+![npm](https://img.shields.io/npm/l/express.svg?style=plastic)
+</p>
 
 This library primarily uses the 'Direct Stiffness Method' to solve trusses and frames.
 
@@ -12,7 +15,6 @@ This library primarily uses the 'Direct Stiffness Method' to solve trusses and f
 	* Circle
 	* Hollow Circle
 * AISC predefined cross sections and properties
-* TODO: Custom shapes based on inputed coordinates (CP3)
 
 ### Material Database
 * A992, A36, custom, etc...
@@ -22,7 +24,6 @@ This library primarily uses the 'Direct Stiffness Method' to solve trusses and f
 * Member class
 * Structure class
 	* Truss solving method and deformation plot
-	* TODO: frame solving method.
 
 ### References:
 
