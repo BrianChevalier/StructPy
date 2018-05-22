@@ -1,8 +1,8 @@
 # Structural Analysis in Python
 
 <p align="center">
-[![Build Status](https://travis-ci.org/BrianChevalier/StructPy.svg?branch=master)](https://travis-ci.org/BrianChevalier/StructPy)
-![npm](https://img.shields.io/npm/l/express.svg?style=plastic)
+<img src="https://travis-ci.org/BrianChevalier/StructPy.svg?branch=master" alt="Build Status">
+<img src="https://img.shields.io/npm/l/express.svg?style=plastic" alt="MIT License">
 </p>
 
 This library primarily uses the 'Direct Stiffness Method' to solve trusses and frames.
