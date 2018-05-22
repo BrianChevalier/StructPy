@@ -45,11 +45,7 @@ class TestCross(unittest.TestCase):
 		
 		xs1.A = 3
 		
-		## TO DO: Add printing unit test.
-		
-	def test_intentionalfail(self):
-		self.assertEqual(1, 2)
-		
+		## TO DO: Add printing unit test.		
 		
 if __name__ == '__main__':
 	unittest.main()

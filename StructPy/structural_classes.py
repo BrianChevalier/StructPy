@@ -46,7 +46,7 @@ class Node():
 			self.yfix = 0
 			self.theta = 1
 		else:
-			raise ValueError('Support type undefined. Please use a valid support.')
+			raise ValueError('Support type undefined. Please use a valid support type.')
 		
 	def __str__(self):
 		string = '(%.1f, %.1f)'

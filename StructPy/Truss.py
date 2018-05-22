@@ -67,6 +67,7 @@ class Truss(sc.Structure):
 			A = member.cross.A
 			E = member.material.E
 			L = member.length
+			
 			member.axial = (A*E)/L * np.matrix([l, m, -l, -m]) * np.asmatrix(d[ind]).T
 			
 		return d
