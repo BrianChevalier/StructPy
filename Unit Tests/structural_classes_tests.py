@@ -33,7 +33,7 @@ class Struct_Classes(unittest.TestCase):
 		self.assertEqual(self.s1.nMembers, 3)
 		self.assertEqual(self.s1.nNodes, 3)
 		self.assertEqual(self.xs1.A, self.s1.members[0].cross.A)
-		self.assertEqual(self.s1.members[2	].length, 2.0)	
+		self.assertEqual(self.s1.members[2].length, 2.0)	
 		
 	def test_solveTruss(self):
 		Forces = np.matrix('0; 0; 100; 100; 0; 0')

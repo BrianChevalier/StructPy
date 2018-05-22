@@ -53,6 +53,8 @@ class Truss(sc.Structure):
 		
 		D = np.linalg.solve(reducedK, reducedF)
 		d = self.BC.astype('float64') #make sure its not an int.
+		print(index.ndim)
+		print(d.ndim)
 		d[index] = D
 				
 		for i, node in enumerate(self.nodes):
