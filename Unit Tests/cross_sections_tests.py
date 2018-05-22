@@ -47,6 +47,9 @@ class TestCross(unittest.TestCase):
 		
 		## TO DO: Add printing unit test.
 		
+	def test_intentionalfail(self):
+		self.assertEqual(1, 2)
+		
 		
 if __name__ == '__main__':
 	unittest.main()
