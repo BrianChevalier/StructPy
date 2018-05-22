@@ -4,7 +4,7 @@ python:
 sudo: false
 script:
 - python setup.py install
-- python -m unittest discover -s 'Unit\ Tests' -p '*_tests.py'
+- python -m unittest discover -s 'Unit Tests' -p '*_tests.py'
 
 notifications:
   pushover:
