@@ -1,8 +1,6 @@
-import sys
-sys.path.append('..')
-import cross_sections as xs
-import structural_classes as sc
-import materials as ma
+import StructPy.cross_sections as xs
+import StructPy.structural_classes as sc
+import StructPy.materials as ma
 
 xs1 = xs.generalSection(A=30, Ix=700)
 
