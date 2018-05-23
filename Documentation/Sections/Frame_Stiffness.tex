@@ -69,3 +69,25 @@ The global element stiffness matrix for a frame element is then:
 		\end{Bmatrix}
 	\end{equation}
 \end{strip}
+
+
+\subsection{Equivalent Nodal Loading}
+To solve the deformations with the governing equations, the equivalent nodal loading must be known (i.e. $N_0$, $V_0$, etc). 
+
+The equivalent nodal loading for a frame element with an applied point load
+
+\begin{equation}
+	\vec{q'} = \left\{ 
+	0,
+	\frac{Pb^2(L+2a)}{l^3},
+	\frac{Pab^2}{L^2},
+	0,
+	\frac{Pa^2(L+2b)}{L^3},
+	\frac{-Pa^2b}{L^2}
+	\right\}
+\end{equation}
+
+\begin{figure}[h]	\centerline{\includegraphics[width=0.5\columnwidth]{Figures/EqPointLoad}}
+	\caption{Equivalent Nodal Load}
+	\label{fig:EqPointLoad}
+\end{figure}
