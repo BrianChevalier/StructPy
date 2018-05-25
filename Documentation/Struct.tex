@@ -1,0 +1,126 @@
+\documentclass{article}
+
+\usepackage{tikz}
+\usepackage{stanli}
+\usepackage{tikzcivil}
+
+\usetikzlibrary{decorations.pathreplacing}
+\tikzset{%
+  show curve controls/.style={
+    postaction={
+      decoration={
+        show path construction,
+        curveto code={
+          \draw [blue] 
+            (\tikzinputsegmentfirst) -- (\tikzinputsegmentsupporta)
+            (\tikzinputsegmentlast) -- (\tikzinputsegmentsupportb);
+          \fill [red, opacity=0.5] 
+            (\tikzinputsegmentsupporta) circle [radius=.5ex]
+            (\tikzinputsegmentsupportb) circle [radius=.5ex];
+        }
+      },
+      decorate
+}}}
+
+\begin{document}
+
+\begin{tikzpicture}
+
+	\scaling{1}
+	\draw[help lines, step=.5]
+			% bottom left grid top right
+			(-1, -1) grid (1, 1);
+	
+	% Nodes
+	% label, x, y
+	\point{A}{0}{0}
+	\point{B}{10}{0}
+	
+	\draw [line width=3pt]%, show curve controls] 
+			  (0, 0)
+			  .. controls (2,0) and (3,-1)
+			  .. (5, -1)
+			  .. controls (6, -1) and (8, -1)
+			  .. (10, 0);
+
+	
+	% Element
+	% , SN, EN
+	\beam{1}{A}{B}
+	
+	% Fixity
+	% Type, Node, angle of support (deg)
+	% 1: pin
+	% 2: roller
+	% 3: fixed
+	% 4: wall roller
+	% 5: spring
+	% 6: rotational spring
+	\support{3}{A}[-90]
+	\support{1}{B}[0]
+	
+	% Loading
+	% Type, SN, EN, w0, wL, dx
+	\begin{scope}[color=red]
+		\lineload{1}{A}{B}[1][1][0.25];
+	\end{scope}
+	
+	\axisTwo[position={-2,0}]{$\vec{e_1}$}{$\vec{e_2}$}
+
+\end{tikzpicture}
+
+\newpage
+
+\begin{tikzpicture}
+
+	\scaling{1}
+	\draw[help lines, step=.5]
+			% bottom left grid top right
+			(-1, -1) grid (1, 1);
+	
+	% Nodes
+	% label, x, y
+	\point{A}{0}{0}
+	\point{B}{10}{0}
+	
+	\draw [line width=3pt]%, show curve controls] 
+			  (0, 0)
+			  .. controls (2,0) and (3,-1)
+			  .. (5, -1)
+			  .. controls (6, -1) and (8, -1)
+			  .. (10, 0);
+
+	
+	% Element
+	% , SN, EN
+	\beam{1}{A}{B}
+	
+	% Fixity
+	% Type, Node, angle of support (deg)
+	% 1: pin
+	% 2: roller
+	% 3: fixed
+	% 4: wall roller
+	% 5: spring
+	% 6: rotational spring
+	\Support[position={10,0}, angle=90,
+width = 1cm, type=fixedsliding]
+	\Support[position=A, angle=-90, width=1cm, type=fixed]
+	
+	% Loading
+	% Type, SN, EN, w0, wL, dx
+	\begin{scope}[color=red]
+		\lineload{1}{A}{B}[1][1][0.25];
+	\end{scope}
+	
+	%\axisTwo[position={-2,0}]{$\vec{e_1}$}{$\vec{e_2}$}
+
+% Label DoF
+\axisTwoRot[position={0cm, 2cm}]{1}{2}{3}
+\axisTwoRot[position={10cm, 2cm}]{4}{5}{6}
+
+\end{tikzpicture}
+
+
+	
+\end{document}
