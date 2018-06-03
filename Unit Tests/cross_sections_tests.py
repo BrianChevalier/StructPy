@@ -1,5 +1,5 @@
 import unittest
-import StructPy.cross_sections as xs
+import StructPy.StructPy.cross_sections as xs
 
 
 # class name doesn't matter
