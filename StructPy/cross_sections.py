@@ -2,7 +2,7 @@ import numpy as np
 import math
 import matplotlib.pyplot as plt
 import openpyxl as xl
-import Resources.pickle_sections as pxs
+import StructPy.Resources.pickle_sections as pxs
 
 
 class Section():

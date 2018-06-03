@@ -1,5 +1,5 @@
-from StructPy import cross_sections as xs
-from StructPy import materials as ma
+from StructPy.StructPy import cross_sections as xs
+from StructPy.StructPy import materials as ma
 import matplotlib.pyplot as plt
 import numpy as np
 import math
