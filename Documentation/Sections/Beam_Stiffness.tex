@@ -1,8 +1,11 @@
 \section{Beam Direct Stiffness Method}
 
-A beam element has four degrees of freedom. Two degrees of freedom at each node which includes the rotation $\theta$ and the deflection or transverse displacement, $w$.
+A beam element has four degrees of freedom. Two degrees of freedom at each node which includes the rotation, $\theta$, and the deflection or transverse displacement, $w$.
 
-\begin{figure}[h]	\centerline{\includegraphics[width=0.7\columnwidth]{Figures/DeflectionandRotation}}
+\begin{figure}[h]	
+	\centerline{
+		\includegraphics[width=0.7\columnwidth]{Figures/DeflectionandRotation}
+		}
 	\caption{Degrees of Freedom}
 	\label{fig:DeflectionandRotation}
 \end{figure}
@@ -11,7 +14,10 @@ A beam element has four degrees of freedom. Two degrees of freedom at each node 
 
 We will isolate each degree of freedom by applying boundary conditions at each node, such that each beam will only have one unrestrained kinematic unknown. Figure \ref{fig:BCFrame} shows the various boundary conditions that will be used to determine the beam bending stiffness. This will allow us to derive the force-displacement relationship necessary to solve the beam.
 
-\begin{figure}[H]	\centerline{\includegraphics[width=0.8\columnwidth]{Figures/BCFrame}}
+\begin{figure}[H]
+	\centerline{
+		\includegraphics[width=0.8\columnwidth]{Figures/BCFrame}
+		}
 	\caption{Beam Boundary Conditions}
 	\label{fig:BCFrame}
 \end{figure}
@@ -29,7 +35,7 @@ The following variables will be used for notational conveninece when defining th
 	\end{tabular}
 \end{center}
 
-The global element stiffness matrix for a beam is therefore:
+The local element stiffness matrix for a beam is therefore:
 \begin{align}
 	\begin{Bmatrix}
 		V_0\\ M_0\\ \hline V_L\\ M_L
@@ -48,3 +54,4 @@ The global element stiffness matrix for a beam is therefore:
 	\end{Bmatrix}
 \end{align}
 
+The global element stiffness matrix will not be discussed since a beam only has elements along one coordinate system. 

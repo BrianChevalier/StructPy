@@ -1,5 +1,5 @@
 \section{Frame Direct Stiffness Method}
-The \textit{Direct Stiffness Method} extends solving statically indeterminate frames. Each node in a frame has three degrees of freedom in comparison to two degrees of freedom for a truss. The additional degree of freedom is the rotation at each node. The local and global rotation will be equal.
+The \textit{Direct Stiffness Method} extends solving statically indeterminate frames. Each node in a frame has three degrees of freedom in comparison to two degrees of freedom for a truss. The additional degree of freedom is the rotation at each node.
 
 \subsection{Global Element Stiffness}
 
@@ -18,6 +18,8 @@ The global transformation matrix is:
 		u_x'\\ u_y'\\ \theta'
 	\end{Bmatrix}
 \end{equation}
+
+Note that this transformation matrix has no effect on the rotation since rotating the whole coordinate system does not change the relative rotation at a node.
 
 Combining the \textit{local} element stiffness matricies for both a beam element and truss element yields:
 
@@ -79,7 +81,7 @@ The equivalent nodal loading for a frame element with an applied point load
 \begin{equation}
 	\vec{q'} = \left\{ 
 	0,
-	\frac{Pb^2(L+2a)}{l^3},
+	\frac{Pb^2(L+2a)}{L^3},
 	\frac{Pab^2}{L^2},
 	0,
 	\frac{Pa^2(L+2b)}{L^3},
@@ -87,7 +89,24 @@ The equivalent nodal loading for a frame element with an applied point load
 	\right\}
 \end{equation}
 
-\begin{figure}[h]	\centerline{\includegraphics[width=0.5\columnwidth]{Figures/EqPointLoad}}
+\begin{figure}[h]	
+	\centerline{
+		\includegraphics[width=0.5\columnwidth]{Figures/EqPointLoad}
+		}
 	\caption{Equivalent Nodal Load}
 	\label{fig:EqPointLoad}
 \end{figure}
+
+\begin{align}
+	\vec{q'} = \left\{ 
+	0,
+	\frac{L(7w_0+3w_L)}{20},
+	\frac{L^2(3w_0+2w_L)}{60},
+	0,
+	\frac{L(3w_0+7w_L)}{20},
+	-\frac{L^2(2w_0+3w_L)}{60}
+	\right\}
+\end{align}
+
+
+

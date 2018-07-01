@@ -1,0 +1,698 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%* file tikzcivil-structural.tex
+%*
+%*
+%*  Author: Cristóbal Tapia
+%*  crtapia at gmail dot com
+%*
+%*  This program is free software; you can redistribute it and/or modify
+%*  it under the terms of the GNU General Public License as published by
+%*  the Free Software Foundation; either version 2 of the License, or
+%*  (at your option) any later version.
+%*
+%*  This program is distributed in the hope that it will be useful,
+%*  but WITHOUT ANY WARRANTY; without even the implied warranty of
+%*  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%*  GNU General Public License for more details.
+%*
+%*  You should have received a copy of the GNU General Public License
+%*  along with this program; if not, write to the Free Software
+%*  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+%*
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%This file contains all the commands related to the structural analysis.
+%
+%----------- Definition Shapes for the supports --------------------------%
+%
+\makeatletter
+\pgfdeclareshape{pinned support}{
+  %Define top of the triangle as the center
+  \inheritsavedanchors[from=circle]
+  \saveddimen{\radius}{\pgf@x=\pgf@x}
+  \inheritanchor[from=circle]{center}
+  %\savedanchor{\centerpoint}{%
+  %  \pgf@x=0.0
+  %  \pgf@y=\radius
+  %  %minimum height is chequed
+  %  %\ifdim\pgf@y<1.0\radius
+  %  %  \pgf@x=0.0\pgf@xa
+  %  %  \pgf@y=1.0\pgf@ya
+  %  %\fi
+  %  %A minimum width is set
+  %  %\ifdim\pgf@y<10pt
+  %  %  \pgf@x=0pt
+  %  %  \pgf@y=10pt
+  %  %\fi
+  %  %\advance\pgf@y by -1.0\dp\pgfnodeparttextbox%
+  %}
+  \anchor{center}{\centerpoint}
+  \anchor{south east}{
+    \centerpoint
+    \pgf@xa=\pgf@y
+    \advance\pgf@x by0.707107\pgf@xa
+    \advance\pgf@y by-0.707107\pgf@xa
+  }
+  \anchor{south west}{
+    \centerpoint
+    \pgf@xa=\pgf@y
+    \advance\pgf@x by-0.707107\pgf@xa
+    \advance\pgf@y by-0.707107\pgf@xa
+  }
+  \anchorborder{\centerpoint}
+  \backgroundpath{
+    \pgf@x=\radius
+    %\bottomright
+    \pgf@xb=2\pgf@x
+    \pgf@yb=-2\pgf@x
+    \pgf@xc=-2\pgf@x
+    \pgf@yc=-2\pgf@x
+    \centerpoint
+    \pgf@xa=\pgf@x
+    \pgf@ya=\pgf@y
+    % If text is present shift shape to center 
+    % You need to shift more, but to get the idea
+    %\centerpoint
+    %\advance\pgf@xb by\pgf@x
+    %\advance\pgf@yb by\pgf@y
+    %\advance\pgf@xc by\pgf@x
+    %\advance\pgf@yc by\pgf@y
+    % Below are good for debugging purposes.
+    \message{^^JTop : \the\pgf@xa,\the\pgf@ya}
+    \message{^^JWest: \the\pgf@xb,\the\pgf@yb}
+    \message{^^JEast: \the\pgf@xc,\the\pgf@yc}
+    \message{^^JCent: \the\pgf@x,\the\pgf@y}
+    \message{^^JR: \the\pgfutil@tempdima}
+    \message{^^JRadius: \radius}
+
+    \pgfpathmoveto{\pgfpoint{\pgf@xa}{\pgf@ya}}%
+    \pgfpathlineto{\pgfpoint{\pgf@xb}{\pgf@yb}}%
+    \pgfpathlineto{\pgfpoint{\pgf@xc}{\pgf@yc}}%
+    \pgfpathclose%
+    \pgfusepath{stroke}%
+  }
+
+}
+\makeatother
+
+
+%--------------- Definition of command \axisTwo -------------------------------%
+%Defines an axis with two perpendicular directions. This is
+%intended to be used in the description of degrees of freedom or to define
+%the coordinate system of a drawing.
+%------------------------------------------------------------------------------%
+%
+\pgfkeys{
+  /civil/axistwo/.is family, /civil/axistwo,
+  default/.style = {
+    position = {0cm,0cm},
+    rotate   = 0,
+    size     = 30pt,
+  },
+  position/.store in = \axisPosition,
+  rotate/.store in   = \axisAngle,
+  size/.store in     = \axisSize,
+}
+
+\newcommand\axisTwo[3][]{%
+  \pgfkeys{/civil/axistwo, default, #1,}%
+  \coordinate (p0) at (\axisPosition) {};
+  \node (px) at ([xshift=\axisSize]p0) {#2};
+  \node (py) at ([yshift=\axisSize]p0) {#3};
+  %Axis will be drawn
+  \draw [->, thick] (p0) -- (px);
+  \draw [->, thick] (p0) -- (py);
+}
+
+
+%--------------- Definition of command \axisTwoRot ----------------------------%
+%Similar to de \axisTwo command, but with a rotation degree of freedom.
+%------------------------------------------------------------------------------%
+%
+\pgfkeys{
+  /civil/axistworot/.is family, /civil/axistworot,
+  default/.style = {
+    position = {0cm,0cm}, rotate = 0,
+    size = 30pt,
+  },
+  position/.store in = \axisPosition,
+  rotate/.store in = \axisAngle,
+  size/.store in = \axisSize,
+}
+\newcommand\axisTwoRot[4][]{%
+  \pgfkeys{/civil/axistworot, default, #1,}%
+  \coordinate (p0) at (\axisPosition) {};
+  \node (px) at ([xshift=\axisSize]p0) {#2};
+  \node (py) at ([yshift=\axisSize]p0) {#3};
+  \coordinate (pr) at ([xshift=\axisSize*1/2*cos(-20)]p0) {};
+  \coordinate (pr) at ([yshift=\axisSize*1/2*sin(-20)]pr) {};
+  \coordinate (prname) at ([xshift=\axisSize*4/5*cos(120)]p0) {};
+  \node (prname) at ([yshift=\axisSize*4/5*sin(120)]prname) {#4};
+  %Axis will be drawn
+  \draw [->, thick] (p0) -- (px);
+  \draw [->, thick] (p0) -- (py);
+  \draw [->, thick] (pr) arc (-20:160:\axisSize*1/2);
+}
+
+%--------------- Definition of command \support -------------------------------%
+%Defines the drawing of different kind of supports, capable of rotating
+%------------------------------------------------------------------------------%
+%Defining conditionals
+\newif\iffixed
+\newif\ifpinned
+\newif\ifsliding
+\newif\iffixedsliding
+%Defining some auxiliary commands
+\newcommand\activatefixed{%
+  \fixedtrue
+  \pinnedfalse
+  \slidingfalse
+  \fixedslidingfalse
+}
+%
+\newcommand\activatepinned{%
+  \fixedfalse
+  \pinnedtrue
+  \slidingfalse
+  \fixedslidingfalse
+}
+%
+\newcommand\activatesliding{%
+  \fixedfalse
+  \pinnedfalse
+  \slidingtrue
+  \fixedslidingfalse
+}
+%
+\newcommand\activatefixedsliding{%
+  \fixedfalse
+  \pinnedfalse
+  \slidingfalse
+  \fixedslidingtrue
+}
+%
+\pgfkeys{
+  /civil/supports/.is family, /civil/supports,
+  default/.style = {
+    position = {0cm,0cm},
+    angle    = 0,
+    type     = fixed,
+    width    = 1cm,
+  },
+  type/.is choice,
+  type/fixed/.code        = {\activatefixed},
+  type/pinned/.code       = {\activatepinned},
+  type/sliding/.code      = {\activatesliding},
+  type/fixedsliding/.code = {\activatefixedsliding},
+  position/.store in      = \supportPosition,
+  angle/.store in         = \supportAngle,
+  width/.store in         = \supportWidth,
+}
+%--------Definition of the command begins-------------------------------------%
+\newcommand\Support[1][]{%
+  \pgfkeys{/civil/supports, default, #1,}%
+  %Initial position
+  \coordinate (k1) at (\supportPosition) ;
+  %If the type of the support is fixed
+  \iffixed
+    %Rotate if requested
+  \pgftransformrotate{\supportAngle}
+  \coordinate (k2) at ([shift={(-\supportWidth/2,0cm)}]k1) {};
+  \coordinate (k3) at ([shift={(\supportWidth/2,0cm)}]k1) {};
+  \supportLines{k2}{k3}{\supportWidth/3};
+    %\filldraw[soil style] (k2) rectangle (k3);
+  \pgftransformrotate{-\supportAngle}
+  \fi
+  %If the type of the support is pinned
+  \ifpinned
+    %Rotate if requested
+  \pgftransformrotate{\supportAngle}
+    %Coordinates for the trianlge
+  \coordinate (k4) at ([shift={(-\supportWidth*1/3,-\supportWidth*1/3)}]k1) {};
+  \coordinate (k5) at ([shift={(\supportWidth*1/3,-\supportWidth*1/3)}]k1) {};
+    %Triangle is drawn
+  \draw[thick] (k1) -- (k4) -- (k5) -- (k1);
+    %This are te coordinates for the upper-left point of the soil-rectangle
+  \coordinate (k6) at ([shift={(-\supportWidth/2,-\supportWidth*1/3)}]k1) {};
+    %This are te coordinates for the upper-right point of the soil-rectangle
+  \coordinate (k7) at ([shift={(\supportWidth/2,-\supportWidth*1/3)}]k1) {};
+    %The rectangle for the soil is drawn
+  \supportLines{k6}{k7}{\supportWidth/3};
+  \pgftransformrotate{-\supportAngle}
+  \fi
+  %If the type of the support is pinned and sliding
+  \ifsliding
+    %Rotate if requested
+  \pgftransformrotate{\supportAngle}
+    %Coordinates for the triangle
+  \coordinate (k4) at ([shift={(-\supportWidth*1/3,-\supportWidth*1/3)}]k1) {};
+  \coordinate (k5) at ([shift={(\supportWidth*1/3,-\supportWidth*1/3)}]k1) {};
+    %Trianlge is drawn
+  \draw[thick] (k1) -- (k4) -- (k5) -- (k1);
+    %Wheels are drawn
+  \coordinate (k6) at ([shift={(0,-\supportWidth*1/3-\supportWidth/10)}]k1);
+  \coordinate (k7) at ([shift={(-\supportWidth*1/5,-\supportWidth*1/3-\supportWidth/10)}]k1);
+  \coordinate (k8) at ([shift={(\supportWidth*1/5,-\supportWidth*1/3-\supportWidth/10)}]k1);
+  \foreach \center in {{(k6)}, {(k7)}, {(k8)}}
+  \draw[thick] \center circle (\supportWidth/10);
+    %Coordinates for the soil under the wheels
+  \coordinate (k9) at ([shift={(-\supportWidth/2,-\supportWidth/10)}]k6);
+  \coordinate (k10) at ([shift={(\supportWidth/2,-\supportWidth/10)}]k6);
+  \supportLines{k9}{k10}{\supportWidth/3};
+    %\filldraw[soil style] (k9) rectangle (k10);
+  \pgftransformrotate{-\supportAngle}
+  \fi
+  %If the type is fixed-sliding
+  \iffixedsliding
+    %Rotate if requested
+  \pgftransformrotate{\supportAngle}
+    %Line
+  \coordinate (k6) at ([shift={(-\supportWidth/2,-\supportWidth/5)}]k1);
+  \coordinate (k7) at ([shift={(\supportWidth/2,-\supportWidth/5)}]k1);
+  \coordinate (k13) at ([shift={(0,-\supportWidth*2/10)}]k1);
+  \draw[line width = 2pt] (k6) -- (k7);
+  \draw[line width = 2pt] (k1) -- (k13);
+    %Wheels are drawn
+  \coordinate (k8) at ([shift={(0,-\supportWidth*3/10)}]k1);
+  \coordinate (k9) at ([shift={(-\supportWidth*2/5,-\supportWidth*3/10)}]k1);
+  \coordinate (k10) at ([shift={(\supportWidth*2/5,-\supportWidth*3/10)}]k1);
+  \foreach \center in {{(k8)}, {(k9)}, {(k10)}}
+  \draw[thick] \center circle (\supportWidth/10);
+    %Coordinates for the soil under the wheels
+  \coordinate (k11) at ([shift={(0,-\supportWidth/5)}]k6);
+  \coordinate (k12) at ([shift={(0,-\supportWidth/5)}]k7);
+  \supportLines{k11}{k12}{\supportWidth/3};
+    %\filldraw[soil style] (k11) rectangle (k12);
+  \pgftransformrotate{-\supportAngle}
+  \fi
+}
+%End of the definition
+%
+%----------------- Definition of command \distLoad: ---------------------------%
+%Defines a command that draws a distributed load, give two points, a separation
+%and a size for the arrow.
+%------------------------------------------------------------------------------%
+%
+\newif\ifnarrows
+
+\pgfkeys{
+  /civil/distLoad/.is family, /civil/distLoad,
+  eq spacing/.is if = narrows,
+  default/.style = {
+    point a    = {0cm,0cm},
+    point b    = {2cm,0cm},
+    separation        = 0.5cm,
+    size       = 0.5cm,
+    n arrows   = 3,
+    eq spacing = true,
+  },
+  point a/.store in  = \posA,
+  point b/.store in  = \posB,
+  sep/.store in      = \sepArrow,
+  size/.store in     = \sizeArrow,
+  %TODO:
+  n arrows/.store in = \nArrows,
+}
+%--------Definition of the command begins-------------------------------------%
+\newcommand\distLoad[3][]{%
+  \pgfkeys{/civil/distLoad, default, #1,}%
+  %Position of point A
+  \coordinate (pA) at (#2) ;
+  %Position of point B
+  \coordinate (pB) at (#3) ;
+  \pgfextractangle{\surfaceAngle}{pA}{pB}
+  %\pgftransformrotate{\surfaceAngle}
+  \draw[thick] (pB) -- (pA);
+  \draw[thick, -latex] \let \p1 = ($(pA) - (pB)$),
+  \n2 = {veclen(\x1,\y1)};
+  \ifnarrows
+  \foreach \li in {0,1,...,\nArrows}{
+    \draw[thick,-latex] ([xshift=\n2/\nArrows*\li cm]pA) -- +(0,-\sizeArrow);
+  }
+  \else
+  \foreach \li in {0,1,...,\n2}{
+    \draw[thick,-latex] ([xshift=\li*\sepArrow]pA) -- +(0,-\sizeArrow);
+    \fi
+  }
+ % \pgftransformrotate{-\surfaceAngle}
+}
+%----------------- Definition of command \MassWithSpring: ---------------------%
+%Defines the drawing of a typical mass tied to a spring. Optionally it can also
+%have a damper.
+%------------------------------------------------------------------------------%
+%
+%pgfkeys are defined first
+%Definition of 'if-keys'
+\newif\ifdamper
+\newif\ifwall
+%
+\pgfkeys{
+  /civil/massWithSpring/.is family, /civil/massWithSpring,
+  draw damper/.is if = damper,
+  with wall/.is if   = wall,
+  defaultMass/.style = {
+    position     = {0em,0em},
+    displacement = 0em,
+    with wall    = true,
+    draw damper  = false,
+  },
+  with damper/.style = {
+    draw damper = true,
+  },
+  position/.store in     = \massPosition,
+  displacement/.store in = \massDisplacement,
+}
+%
+%Definition of the command to draw
+\newcommand\MassWithSpring[1][]{%
+  \pgfkeys{/civil/massWithSpring, defaultMass, #1}%
+  \coordinate (p1) at (\massPosition) ;
+  \coordinate (p2) at ([shift={(0em,4em)}]p1) {};
+  %The position of the spring varies with the presence or
+  %absence of the damper
+  \ifdamper
+  \coordinate (p3) at ([shift={(0em,3.0em)}]p1) {};
+  \coordinate (p4) at ([shift={({4.5em+\massDisplacement},3.0em)}]p1) {};
+  \else
+  \coordinate (p3) at ([shift={(0em,2.2em)}]p1) {};
+  \coordinate (p4) at ([shift={({4.5em+\massDisplacement},2.2em)}]p1) {};
+  \fi
+  %Coordinates for the mass
+  \coordinate (p5) at ([shift={({4.5em+\massDisplacement},3.5em)}]p1) {};
+  \coordinate (p6) at ([shift={({8.5em+\massDisplacement},1.0em)}]p1) {};
+  %Coordinates for the wheels
+  \coordinate (p7) at ([shift={({5.3em+\massDisplacement},0.5em)}]p1) {};
+  \coordinate (p8) at ([shift={({7.7em+\massDisplacement},0.5em)}]p1) {};
+  %The wall will be drawn if requested
+  \ifwall
+    %Coordinates for the damper
+  \coordinate (p9) at ([shift={(0em,1.6em)}]p1) {};
+  \coordinate (p10) at ([shift={({4.5em+\massDisplacement},1.6em)}]p1) {};
+  \draw[column, line width=0.3em] (p1) -- (p2);
+  \fi
+  %Damper is applied if requested
+  \ifdamper
+  \draw[damper] (p9) -- (p10);
+  \fi
+  \pgfmathsetlengthmacro{\separation}{(4.5+\massDisplacement/9)}
+  \draw[spring] (p3) -- (p4);
+  \filldraw[ground] (p5) rectangle (p6);
+  %Wheels are drawn
+  \draw (p7) circle (0.5em);
+  \draw (p8) circle (0.5em);
+}
+%
+%--------------------- Frame --------------------------------------------------%
+%This command defines a frame with a mass
+%------------------------------------------------------------------------------%
+% Definition of if-keys
+\newif\ifsupport
+%
+\pgfkeys{
+  /civil/frame/.is family, /civil/frame,
+  with damper/.is if  = damper,
+  with support/.is if = support,
+  defaultFrame/.style = {
+    height         = 4cm,
+    width          = 4cm,
+    position       = {0em,0em},
+    displacement   = 0em,
+    with damper    = false,
+    with support   = true,
+    mass thickness = 0.5cm,
+  },
+  height/.store in         = \frameHeight,%Story height
+  width/.store in          = \frameWidth,%frame width
+  mass thickness/.store in = \massThickness,%thickness of the floor
+  position/.store in       = \framePosition,%position of the left support
+  displacement/.store in   = \frameDisplacement,%horizontal displacement at the top
+}
+%
+\newcommand{\Frame}[1][]{%
+  \pgfkeys{/civil/frame, defaultFrame, #1}%
+  %\pgfkeys{/civil/supports, defaultFrame, #1}%
+  \coordinate (p1) at (\framePosition) {};
+  \coordinate (p2) at ([shift={(\frameDisplacement,\frameHeight)}]p1) {};
+  \coordinate (p3) at ([shift={(\frameWidth,0)}]p1) {};
+  \coordinate (p4) at ([shift={({\frameWidth+\frameDisplacement},\frameHeight)}]p1) {};
+  %
+  \coordinate (p121) at ([shift={(0,\massThickness)}]p1) {};
+  \coordinate (p122) at ([shift={(0,-\massThickness)}]p2) {};
+  \coordinate (p341) at ([shift={(0,\massThickness)}]p3) {};
+  \coordinate (p342) at ([shift={(0,-\massThickness)}]p4) {};
+  %Columns are drawn
+  \draw[column] (p1) to[out=90,in=-90] (p121) to[out=90,in=-90] (p122) to[out=90,in=-90] (p2);
+  \draw[column] (p3) to[out=90,in=-90] (p341) to[out=90,in=-90] (p342) to[out=90,in=-90] (p4);
+  %Mass-plate is drawn
+  \coordinate (p5) at ([shift={({\frameWidth+\frameDisplacement},\frameHeight-\massThickness)}]p1) {};
+  \filldraw[ground] (p2) rectangle (p5);
+  %Supports are drawn
+  \ifsupport
+  \Support[position = p1];
+  \Support[position = p3];
+  \fi
+  %Damper is added if specified
+  \ifdamper
+    %Define coordinates for the damper
+  \coordinate (p6) at ([xshift=-(\frameWidth+\frameDisplacement)/6]$(p1)!0.5!(p5)$);
+  \coordinate (p7) at ([xshift=(\frameWidth+\frameDisplacement)/6]$(p1)!0.5!(p5)$);
+    %Draw the damper
+  \draw[line width=0.1em] (p1) -- (p6);
+  \draw[line width=0.1em] (p7) -- (p5);
+  \draw[damper, line width=0.1em] (p6) -- (p7);
+  \fi
+}
+%
+%------------------- Definition of command \FrameSimple -----------------------%
+%Defines a simple frame, where you can make each dof move independently.
+%------------------------------------------------------------------------------%
+%This frame has six degree of freedom (three at each of the upper nodes).
+%Each of them can be moved independently.
+\pgfkeys{
+  /civil/frameSimple/.is family, /civil/frameSimple,
+  with damper/.is if  = damper,
+  with support/.is if = support,
+  defaultFrame/.style = {
+    height         = 4cm,
+    width          = 4cm,
+    position       = {0em,0em},
+    displacement   = 0em,
+    with damper    = false,
+    with support   = true,
+    mass thickness = 0.5cm,
+    left support   = fixed,
+    right support  = fixed,
+    %Default values for each dof
+    dof1=0, dof2=0, dof3=0,
+    dof4=0, dof5=0, dof6=0,
+    dof7=0, dof8=0, dof9=0,
+    dof10=0, dof11=0, dof12=0,
+  },
+  height/.store in         = \frameHeight,%Story height
+  width/.store in          = \frameWidth,%frame width
+  mass thickness/.store in = \massThickness,%thickness of the floor
+  position/.store in       = \framePosition,%position of the left support
+  displacement/.store in   = \frameDisplacement,%horizontal displacement at the top
+  left support/.store in   = \leftSupport,
+  right support/.store in  = \rightSupport,
+  dof1/.store in  = \dofOne,
+  dof2/.store in  = \dofTwo,
+  dof3/.store in  = \dofThree,
+  dof4/.store in  = \dofFour,
+  dof5/.store in  = \dofFive,
+  dof6/.store in  = \dofSix,
+  dof7/.store in  = \dofSeven,
+  dof8/.store in  = \dofEight,
+  dof9/.store in  = \dofNine,
+  dof10/.store in = \dofTen,
+  dof11/.store in = \dofEleven,
+  dof12/.store in = \dofTwelve,
+}
+%
+%Definition of the command
+\newcommand{\FrameSimple}[1][]{%
+  \pgfkeys{/civil/frameSimple, defaultFrame, #1}%
+  %Definition of coordinates of the nodes
+  \coordinate (p0) at (\framePosition) {};
+  \coordinate (p1) at ([shift={(\dofSeven,\dofEight)}]p0) {};
+  \coordinate (p2) at ([shift={(\dofOne,\frameHeight+\dofTwo)}]p0) {};
+  \coordinate (p3) at ([shift={(\frameWidth+\dofFour,\frameHeight+\dofFive)}]p0) {};
+  \coordinate (p4) at ([shift={(\frameWidth+\dofTen,\dofEleven)}]p0) {};
+  %The following coordinates are used when drawing the elements to
+  %make the curves look better
+  \pgftransformrotate{\dofNine}
+  \coordinate (p11) at ([shift={(0,\frameHeight/10)}]p1);
+  \pgftransformrotate{-\dofNine}
+  \pgftransformrotate{\dofThree}
+  \coordinate (p22) at ([shift={(\frameWidth/10,0)}]p2);
+  \coordinate (p21) at ([shift={(0,-\frameHeight/10)}]p2);
+  \pgftransformrotate{-\dofThree}
+  \pgftransformrotate{\dofSix}
+  \coordinate (p32) at ([shift={(-\frameWidth/10,0)}]p3);
+  \coordinate (p33) at ([shift={(0,-\frameHeight/10)}]p3);
+  \pgftransformrotate{-\dofSix}
+  \pgftransformrotate{\dofTwelve}
+  \coordinate (p43) at ([shift={(0,\frameHeight/10)}]p4);
+  \pgftransformrotate{-\dofTwelve}
+  %Frame element 1
+  \draw[frame element] (p1) to[out=90+\dofNine,in=-90+\dofNine]
+  (p11) to[out=90+\dofNine,in=-90+\dofThree]
+  (p21) to[out=90+\dofThree,in=-90+\dofThree] (p2);
+  %Frame element 2
+  \draw[frame element] (p2) to[out=0+\dofThree,in=180+\dofThree]
+  (p22) to[out=0+\dofThree,in=180+\dofSix]
+  (p32) to[out=0+\dofSix,in=180+\dofSix] (p3);
+  %Frame element 3
+  \draw[frame element] (p3) to[out=-90+\dofSix,in=90+\dofSix]
+  (p33) to[out=-90+\dofSix,in=90+\dofTwelve]
+  (p43) to[out=-90+\dofTwelve,in=90+\dofTwelve] (p4);
+  %Supports are drawn
+  \ifsupport
+  \Support[position = p1, type=\leftSupport];
+  \Support[position = p4, type=\rightSupport];
+  \fi
+%
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Timber constructions
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% The following drowings are related to timber structures.
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Beams
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%Conditionals are defined
+\newif\ifleftsupport
+\newif\ifrightsupport
+\newif\ifcutleft
+\newif\ifcutright
+%pgfkeys are defined
+\pgfkeys{
+  /civil/Beam/.is family, /civil/Beam,
+  with support/.is if       = support,
+  draw left support/.is if  = leftsupport,
+  draw right support/.is if = rightsupport,
+  cut right edge/.is if     = cutright,
+  cut left edge/.is if      = cutleft,
+  defaultBeam/.style = {
+    height             = 4cm,
+    width              = 8cm,
+    position           = {0cm,0cm},
+    with support       = false,
+    draw left support  = false,
+    draw right support = false,
+    left support       = pinned,
+    right support      = pinned,
+    cut right edge     = false,
+    cut left edge      = false,
+  },
+  with left support/.style = {
+    draw left support = true,
+  },
+  with right support/.style = {
+    draw right support = true,
+  },
+  cut right/.style = {
+    cut right edge = true,
+  },
+  cut left/.style = {
+    cut left edge = true,
+  },
+  height/.store in        = \beamHeight,%Story height
+  width/.store in         = \beamWidth,%frame width
+  position/.store in      = \beamPosition,%position of the left support
+  left support/.store in  = \leftSupport,  %type of support: fixed, pinned, etc
+  right support/.store in = \rightSupport,
+  line properties/.style  = {
+  },
+}
+%
+%Definition of the command
+\newcommand{\Beam}[1][]{%
+  \pgfkeys{/civil/Beam, defaultBeam, #1}%
+  %Definition of coordinates of the nodes
+  \coordinate (p0) at (\beamPosition) {};
+  \coordinate (p1) at ([shift={(\beamWidth,0)}]p0) {};
+  \coordinate (p2) at ([shift={(\beamWidth,\beamHeight)}]p0) {};
+  \coordinate (p3) at ([shift={(0,\beamHeight)}]p0) {};
+  %Draw beam:
+  \filldraw[line normal, fill=black!0, /civil/Beam/line properties] (p0) -- (p1)
+  \ifcutright
+  to[out=60,in=-120] (p2)
+  \else
+  -- (p2)
+  \fi
+  -- (p3)
+  \ifcutleft
+  to[out=-120,in=60] (p0);
+  \else
+  -- (p0);
+  \fi
+  %Supports are drawn
+  \newcommand\widthSupport{\beamHeight/4}
+  \ifsupport
+  \Support[position = p0, type=\leftSupport, width=\widthSupport];
+  \Support[position = p1, type=\rightSupport, width=\widthSupport];
+  \else
+  \ifleftsupport
+  \Support[position = p0, type=\leftSupport, width=\widthSupport];
+  \fi
+  \ifrightsupport
+  \Support[position = p1, type=\rightSupport, width=\widthSupport];
+  \fi
+  \fi
+%
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Rectangular holes with rounded corners
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Beams with holes, as described in the german code DIN 1052
+%
+%pgfkeys are defined
+\pgfkeys{
+  /civil/rectHole/.is family, /civil/rectHole,
+  defaultRectHole/.style = {
+    height   = 3cm,
+    width    = 3cm,
+    corner r = 0.5cm,
+    position = {0cm,0cm},
+  },
+  position/.store in = \holePosition,
+  corner r/.store in = \holer,
+  width/.store in    = \width,
+  height/.store in   = \height,
+  line properties/.style = {
+    line width=1pt,
+  },
+}
+%
+%Definition of the command
+\newcommand{\RectHole}[1][]{%
+  \pgfkeys{/civil/rectHole, defaultRectHole, #1}%
+  %Definition of coordinates of the nodes
+  %Center of the hole
+  \coordinate (p4) at (\holePosition) {};
+  %Position of other nodes
+  \coordinate (p5) at ([shift={(-\width/2+\holer,  -\height/2)}]p4);
+  \coordinate (p6) at ([shift={(\width/2-\holer,   -\height/2)}]p4);
+  \coordinate (p7) at ([shift={(\width/2,          -\height/2+\holer)}]p4);
+  \coordinate (p8) at ([shift={(\width/2,          \height/2-\holer)}]p4);
+  \coordinate (p9) at ([shift={(\width/2-\holer,   \height/2)}]p4);
+  \coordinate (p10) at ([shift={(-\width/2+\holer, \height/2)}]p4);
+  \coordinate (p11) at ([shift={(-\width/2,        \height/2-\holer)}]p4);
+  \coordinate (p12) at ([shift={(-\width/2,        -\height/2+\holer)}]p4);
+  \filldraw[line normal, fill=white!0, /civil/rectHole/line properties]
+  (p5) to[out=0,in=180]
+  (p6) to[out=0,in=-90]
+  (p7) to[out=90,in=-90]
+  (p8) to[out=90,in=0]
+  (p9) to[out=180,in=0]
+  (p10) to[out=180,in=90]
+  (p11) to[out=-90,in=90]
+  (p12) to[out=-90,in=180] (p5);
+%
+}
+      \endinput
