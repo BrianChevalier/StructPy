@@ -36,7 +36,7 @@ class Struct_Classes(unittest.TestCase):
 		self.assertEqual(self.s1.members[2].length, 2.0)	
 		
 	def test_solveTruss(self):
-		Forces = np.matrix('0; 0; 100; 100; 0; 0')
+		Forces = np.array([0, 0, 100, 100, 0, 0])
 		self.s1.directStiffness(Forces)
 		#this should be a zero force member
 		self.assertAlmostEqual(self.s1.members[1].axial[0], 0)
