@@ -1,7 +1,7 @@
-import StructPy.StructPy.cross_sections as xs
-import StructPy.StructPy.structural_classes as sc
-import StructPy.StructPy.Truss as tr
-import StructPy.StructPy.materials as ma
+import StructPy.cross_sections as xs
+import StructPy.structural_classes as sc
+import StructPy.Truss as tr
+import StructPy.materials as ma
 import math 
 # Define material
 A992 = ma.A992()
