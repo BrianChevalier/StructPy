@@ -1,4 +1,4 @@
-from StructPy.StructPy import structural_classes as sc
+from StructPy import structural_classes as sc
 
 
 class steelMember(sc.Member):

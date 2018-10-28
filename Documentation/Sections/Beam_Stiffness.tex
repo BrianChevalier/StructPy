@@ -14,13 +14,68 @@ A beam element has four degrees of freedom. Two degrees of freedom at each node 
 
 We will isolate each degree of freedom by applying boundary conditions at each node, such that each beam will only have one unrestrained kinematic unknown. Figure \ref{fig:BCFrame} shows the various boundary conditions that will be used to determine the beam bending stiffness. This will allow us to derive the force-displacement relationship necessary to solve the beam.
 
-\begin{figure}[H]
-	\centerline{
-		\includegraphics[width=0.8\columnwidth]{Figures/BCFrame}
-		}
-	\caption{Beam Boundary Conditions}
-	\label{fig:BCFrame}
+%\begin{figure}[H]
+%	\centerline{
+%		\includegraphics[width=0.8\columnwidth]{Figures/BCFrame}
+%		}
+%	\caption{Beam Boundary Conditions}
+%	\label{fig:BCFrame}
+%\end{figure}
+
+\begin{figure}[h]
+\begin{center}
+\begin{tikzpicture}
+	
+	\point{A}{0}{0}
+	\point{B}{5}{0}
+	\beam{4}{A}{B}
+	\support{3}{A}[-90]
+	\support{4}{B}[90]
+	
+	\draw[red, thick, dashed] (0,0) .. controls (3,0) and (3,-1) .. (5,-1);
+	
+	\point{A}{0}{-2}
+	\point{B}{5}{-2}
+	\beam{4}{A}{B}
+	\support{4}{A}[-90]
+	\support{3}{B}[90]
+
+	\draw[red, thick, dashed] (0,-3) .. controls (2,-3) and (2,-3) .. (5,-2);
+
+
+\end{tikzpicture}
+\caption{Isolation of Deflection}
+\end{center}
 \end{figure}
+
+\begin{figure}[h]
+\begin{center}
+\begin{tikzpicture}
+	
+	\point{A}{0}{0}
+	\point{B}{5}{0}
+	\beam{4}{A}{B}
+	\support{3}{A}[-90]
+	\support{1}{B}[0]
+	
+	\draw[red, thick, dashed] (0,0) .. controls (3,0) and (3,-1) .. (5,0);
+	
+	
+	\point{A}{0}{-2}
+	\point{B}{5}{-2}
+	\beam{4}{A}{B}
+	\support{1}{A}[0]
+	\support{3}{B}[90]
+	
+	\begin{scope}[yscale=1,xscale=-1,xshift=-5cm]
+	\draw[red, thick, dashed] (0,-2) .. controls (3,-2) and (3,-3) .. (5,-2);
+	\end{scope}
+	
+\end{tikzpicture}
+\caption{Isolation of Rotation}
+\end{center}
+\end{figure}
+
 
 \begin{align*}
 	w_0=0 & \text{	} \theta_0=?\\

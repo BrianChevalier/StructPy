@@ -1,6 +1,6 @@
-import StructPy.StructPy.structural_classes as sc
-import StructPy.StructPy.cross_sections as xs
-import StructPy.StructPy.materials as ma
+import StructPy.structural_classes as sc
+import StructPy.cross_sections as xs
+import StructPy.materials as ma
 import numpy as np
 
 class Frame(sc.Structure):

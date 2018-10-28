@@ -89,24 +89,78 @@ The equivalent nodal loading for a frame element with an applied point load
 	\right\}
 \end{equation}
 
-\begin{figure}[h]	
-	\centerline{
-		\includegraphics[width=0.5\columnwidth]{Figures/EqPointLoad}
-		}
-	\caption{Equivalent Nodal Load}
-	\label{fig:EqPointLoad}
-\end{figure}
+%\begin{figure}[h]	
+%	\centerline{
+%		\includegraphics[width=0.5\columnwidth]{Figures/EqPointLoad}
+%		}
+%	\caption{Equivalent Nodal Load}
+%	\label{fig:EqPointLoad}
+%\end{figure}
 
-\begin{align}
-	\vec{q'} = \left\{ 
-	0,
+\begin{equation}
+	\begin{split}
+	\vec{q'} = \Bigg\{ 
+	&0,
 	\frac{L(7w_0+3w_L)}{20},
-	\frac{L^2(3w_0+2w_L)}{60},
-	0,
+	\frac{L^2(3w_0+2w_L)}{60}, \\
+	&0,
 	\frac{L(3w_0+7w_L)}{20},
 	-\frac{L^2(2w_0+3w_L)}{60}
-	\right\}
-\end{align}
+	\Bigg\}
+	\end{split}
+\end{equation}
+
+
+\begin{figure}[h]
+\begin{center}
+\begin{tikzpicture}
+	
+	\point{A}{0}{0}
+	\point{B}{5}{0}
+	\support{3}{A}[-90]
+	\support{3}{B}[90]
+	\beam{4}{A}{B}[A][B]
+	
+	\point{C}{3.5}{0}
+	\load{1}{C}[90][0][0.5]
+	
+	\dimensioning{1}{A}{C}{1}[$a$]
+	\dimensioning{1}{C}{B}{1}[$L-a$]
+	\notation{1}{C}{$P$}[above=1.5]
+	
+\end{tikzpicture}
+\end{center}
+\end{figure}
+
+
+
+
+\begin{figure}[h]
+\begin{center}
+\begin{tikzpicture}
+	
+	\point{A}{0}{0}
+	\point{B}{5}{0}
+	\support{3}{A}[-90]
+	\support{3}{B}[90]
+	\beam{4}{A}{B}[A][B]
+	
+	\lineload{1}{A}{B}[2][1][.25]
+	
+	\dimensioning{1}{A}{B}{-1}[$L$]
+	\notation{1}{A}{$w_0$}[above=2.5]
+	\notation{1}{B}{$w_L$}[above=1.5]
+
+\end{tikzpicture}
+\end{center}
+\end{figure}
+
+
+
+
+
+
+
 
 
 

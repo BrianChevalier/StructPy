@@ -1,6 +1,6 @@
-from StructPy.StructPy import structural_classes as sc
-from StructPy.StructPy import cross_sections as xs
-from StructPy.StructPy import materials as ma
+from StructPy import structural_classes as sc
+from StructPy import cross_sections as xs
+from StructPy import materials as ma
 import numpy as np
 
 import decimal
