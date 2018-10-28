@@ -13,11 +13,6 @@ setup(name='StructPy',
           'numpy',
           'matplotlib'],
       zip_safe=False,
-      packages=['Resources'],
-      py_modules=['structural_classes',
-      					  'Truss',
-      					  'steel_classes',
-      					  'materials',
-      					  'Frame',
-      					  'Loads'])
+      packages=['Resources','StructPy']
+      )
  
