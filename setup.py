@@ -1,4 +1,5 @@
-from setuptools import setup, find_packages
+#from setuptools import setup, find_packages
+from distutils.core import setup
 
 setup(name='StructPy',
       version='0.1',
@@ -12,6 +13,11 @@ setup(name='StructPy',
           'numpy',
           'matplotlib'],
       zip_safe=False,
-      packages=['StructPy', 'Resources'],
-      py_modules=['StructPy', 'Resources'])
+      packages=['Resources'],
+      py_modules=['structural_classes',
+      					  'Truss',
+      					  'steel_classes',
+      					  'materials',
+      					  'Frame',
+      					  'Loads'])
  
