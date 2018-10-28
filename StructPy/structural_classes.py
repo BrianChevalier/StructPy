@@ -195,16 +195,24 @@ class Structure(Member, Node):
 		if cross == None:
 			cross = self.defaultcross
 		
-		self.members.append(Member(SN, EN, material, cross))
+		member = Member(SN, EN, material, cross)
+		self.members.append(member)
 		self.nMembers += 1
+		
+		return member
 		
 	def plot(self, show=True):
 		"""Plot the undeformed structure"""
 		plt.figure(1); plt.clf(); plt.grid(True)
 		
+		length = 0
+		for member in self.members:
+			if member.length > length:
+				length = member.length
+		
 		for i, node in enumerate(self.nodes):
 			plt.scatter([node.x], [node.y], color='#000000', s=100)
-			R = 0.2 #length of support
+			R = 0.2*length #length of support
 			
 			if node.xfix == 0:
 				x1 = node.x - R
@@ -231,20 +239,20 @@ class Structure(Member, Node):
 		if show == True:
 			plt.show()
 		
-	def plotDeformation(self, mag=10000, nfig=1):
+	def plotDeformation(self, scale=100, nfig=1):
 		
 		plt.figure(nfig); self.plot(show=False)
 		
 		for i, node in enumerate(self.nodes):
-			plt.scatter([node.x + mag*node.xdef], [node.y + mag*node.ydef], color='#d80000', s=100)
+			plt.scatter([node.x + scale*node.xdef], [node.y + scale*node.ydef], color='#d80000', s=100)
 			
 		for i, member in enumerate(self.members):
-			x1 = member.SN.x + mag*member.SN.xdef
-			y1 = member.SN.y + mag*member.SN.ydef
-			x2 = member.EN.x + mag*member.EN.xdef
-			y2 = member.EN.y + mag*member.EN.ydef
+			x1 = member.SN.x + scale*member.SN.xdef
+			y1 = member.SN.y + scale*member.SN.ydef
+			x2 = member.EN.x + scale*member.EN.xdef
+			y2 = member.EN.y + scale*member.EN.ydef
 			plt.plot([x1, x2], [y1, y2], '--', color='#b83939', lw=2, zorder=-1)
-		
+		plt.title(f"Truss Deformation Plot (scale: {scale}X)")
 		plt.show()
 		
 	def printNodes(self):
