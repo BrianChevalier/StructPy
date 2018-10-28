@@ -46,6 +46,10 @@ class Truss(sc.Structure):
 	def directStiffness(self, loading):
 		"""This executes the direct stiffness method 
 		for the structure given some loading"""
+		
+		if type(loading) == type([]):
+			raise TypeError("input must be np.array")
+		
 		# rows with displacement
 		index = self.BC == 1
 		reducedK = self.K[index,:][:,index]
@@ -60,9 +64,11 @@ class Truss(sc.Structure):
 			node.ydef = d[2*node.n + 1]
 		
 		for i, member in enumerate(self.members):
+			
 			l = member.unVec[0]
 			m = member.unVec[1]
 			n = member.unVec[2]
+			
 			ind = member.trussdof
 			A = member.cross.A
 			E = member.material.E
@@ -71,5 +77,18 @@ class Truss(sc.Structure):
 			member.axial = (A*E)/L * np.matrix([l, m, -l, -m]) * np.asmatrix(d[ind]).T
 			
 		return d
+		
+	@property
+	def selfWeightAtNodes(self):
+		"""
+		This outputs a numpy array of the equivalent nodal loading caused by the
+		self weight of the truss in the units of the self weight property
+		"""
+		nodes = np.zeros(self.nNodes)
+		for member in self.members:
+			nodes[member.SN.n] += 0.5 * member.length * member.cross.W
+			nodes[member.EN.n] += 0.5 * member.length * member.cross.W
+			
+		return nodes
 		
 		
