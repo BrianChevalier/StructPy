@@ -1,8 +1,8 @@
 import unittest
-import StructPy.StructPy.cross_sections as xs
-import StructPy.StructPy.structural_classes as sc
-import StructPy.StructPy.materials as ma
-import StructPy.StructPy.Truss as Truss
+import StructPy.cross_sections as xs
+import StructPy.structural_classes as sc
+import StructPy.materials as ma
+import StructPy.Truss as Truss
 import numpy as np
 
 # class name doesn't matter
