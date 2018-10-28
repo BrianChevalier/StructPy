@@ -61,12 +61,16 @@ class AISC():
 			self.labels = labels
 		
 		#index is the row of the shape.
-		index = [i for i, s in enumerate(labels) if AISCName in s]
-		self.row_number = index[0]
+		try:
+			index = [i for i, s in enumerate(labels) if AISCName in s]
+			self.row_number = index[0]
+		except IndexError:
+			raise ValueError("Shape ID not a valid AISC Shape")
 		
 		#assign values from the database as properties
 		def item(col):
 			return self.data[self.row_number][col]
+		self.W = item(4)
 		self.A = item(5)
 		self.Ix = item(38)
 		self.Iy = item(42)
@@ -86,9 +90,10 @@ class AISC():
 		row_num = self.row_number
 		data = self.data
 		
+		print('Here are the properties')
 		print('Section %s in row %i' % (data[row_num][2], row_num))
 		
-		for col in range(5, 84):
+		for col in range(4, 84):
 			colname = data[0][col]
 			val = data[row_num][col]
 			if val == '–':
