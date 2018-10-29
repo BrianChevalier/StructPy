@@ -24,3 +24,6 @@ StructPy.egg-info/SOURCES.txt
 StructPy.egg-info/SOURCES.txt
 StructPy.egg-info/dependency_links.txt
 StructPy.egg-info/requires.txt
+/build
+/StructPy/__pychache__
+/Resources/__pychache__

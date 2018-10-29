@@ -24,3 +24,9 @@ class A36(Steel):
 		self.Fy = 36 #ksi
 		self.Fu = 58 #ksi
 		self.poisson = 0.26
+		
+		
+class Custom():
+	
+	def __init__(self, E):
+		self.E = E

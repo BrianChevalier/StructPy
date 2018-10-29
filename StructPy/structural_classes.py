@@ -48,6 +48,7 @@ class Node():
 		else:
 			raise ValueError('Support type undefined. Please use a valid support type.')
 		
+		
 	def __str__(self):
 		string = '(%.1f, %.1f)'
 		variables = (self.x, self.y)
@@ -179,11 +180,14 @@ class Structure(Member, Node):
 	def addNode(self, x, y, z=0, cost=0, fixity='free'):
 		"""Add node to the structure"""
 		n = self.nNodes #node number
-		self.nodes.append(Node(x, y, z=z, n=n, cost=cost, fixity=fixity))
+		node = Node(x, y, z=z, n=n, cost=cost, fixity=fixity)
+		self.nodes.append(node)
 		self.nNodes += 1
 		
 		if z !=0:
 			self.nDoF = 3
+			
+		return node
 		
 	def addMember(self, SN, EN, material=None, cross=None):
 		"""Add member to the structure"""
