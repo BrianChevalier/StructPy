@@ -30,4 +30,4 @@ This library primarily uses the 'Direct Stiffness Method' to solve trusses and f
 
 ### References:
 
-* [Structural Analysis Theory and Derivations](https://github.com/BrianChevalier/StructPy/blob/master/Documentation/Main.pdf)
+* [Structural Analysis Theory and Derivations](http://www.gitmechanics.com/CEE321/Direct-stiffness/Main.pdf)
