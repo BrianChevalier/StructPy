@@ -1,6 +1,10 @@
 #from setuptools import setup, find_packages
 from distutils.core import setup
 
+path = '/private/var/mobile/Containers/Shared/AppGroup/A79EC7C7-D188-4D79-9F2F-9CE43899AC1C/Pythonista3/Documents/site-packages-3'		
+
+packages = ['Resources','StructPy']
+
 setup(name='StructPy',
       version='0.1',
       description='Structural Analysis in Python',
@@ -13,5 +17,6 @@ setup(name='StructPy',
           'numpy',
           'matplotlib'],
       zip_safe=False,
-      packages=['Resources','StructPy'])
- 
+      packages=packages)
+
+

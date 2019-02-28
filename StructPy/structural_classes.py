@@ -205,7 +205,7 @@ class Structure(Member, Node):
 		
 		return member
 		
-	def plot(self, show=True):
+	def plot(self, show=True,labels=False):
 		"""Plot the undeformed structure"""
 		plt.figure(1); plt.clf(); plt.grid(True)
 		
@@ -239,9 +239,16 @@ class Structure(Member, Node):
 			y2 = member.EN.y
 			plt.plot([x1, x2], [y1, y2], color='#923ab8', lw=3, zorder=-1)
 			
+		
+			
+		if labels == True:
+			for i, node in enumerate(self.nodes):
+				plt.Circle((node.x,node.y), 100, color='#ffffff')
+				plt.annotate(str(i), (node.x,node.y))
+				
 		plt.axis('equal'); 
 		if show == True:
-			plt.show()
+			plt.show()		
 		
 	def plotDeformation(self, scale=100, nfig=1):
 		

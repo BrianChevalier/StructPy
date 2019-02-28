@@ -28,5 +28,6 @@ class A36(Steel):
 		
 class Custom():
 	
-	def __init__(self, E):
+	def __init__(self, E, fy):
 		self.E = E
+		self.fy = fy
