@@ -13,7 +13,7 @@ class Struct_Classes(unittest.TestCase):
 	def test_Truss(self):
 			
 			xs1 = xs.generalSection(A=1.2)
-			ma1 = ma.Custom(E=30*10**6) #psi
+			ma1 = ma.Custom(E=30*10**6, fy=60) #psi
 			
 			# Example 6.2.4
 			T1 = Truss.Truss(cross=xs1,material=ma1)
