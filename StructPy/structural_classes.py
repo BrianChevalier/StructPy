@@ -4,14 +4,20 @@ import matplotlib.pyplot as plt
 import numpy as np
 import math
 
-class Node():
-	"""Define node class"""
+
+class Node(object):
+	"""
+	This defines the *Node* class.
+	>>> n1 = Node(0, 0)
+	>>> print(n1)
+	(0, 0)
+	"""
 	def __init__(self, x, y, z=0, n=None, cost=0, fixity='free'):
 		self.x = x
 		self.y = y
 		self.z = z
 		self.cost = cost
-		self.n = n #nodal number
+		self.n = n  # nodal number
 		
 		# Assign boundary conditions
 		# N: normal force
@@ -47,16 +53,15 @@ class Node():
 			self.theta = 1
 		else:
 			raise ValueError('Support type undefined. Please use a valid support type.')
-		
-		
+
 	def __str__(self):
-		string = '(%.1f, %.1f)'
-		variables = (self.x, self.y)
-		return string % variables
+		return f"({self.x:1.1f}, {self.y:1.1f})"
 				
 						
-class Member(Node):
-	"""Define Member class"""
+class Member(object):
+	"""
+	Define Member class
+	"""
 	def __init__(self, SN, EN, material=ma.Steel(), cross=xs.generalSection()):		
 		self.cross = cross
 		self.material = material
@@ -65,7 +70,7 @@ class Member(Node):
 		self.SN = SN
 		self.EN = EN
 		
-		#the axial force 
+		# the axial force
 		self.axial = 0
 		
 	@property
@@ -103,7 +108,9 @@ class Member(Node):
 		
 	@property
 	def kframe(self):
-		"""Local member stiffness matrix for frame"""
+		"""
+		Local member stiffness matrix for frame
+		"""
 		L = self.length
 		E = self.material.E
 		A = self.cross.A
@@ -125,7 +132,9 @@ class Member(Node):
 		
 	@property
 	def T(self):
-		"""Global transformation matrix for 2-D frame"""
+		"""
+		Global transformation matrix for 2-D frame
+		"""
 		l = self.unVec[0]
 		m = self.unVec[1]
 		n = self.unVec[2]
@@ -141,7 +150,9 @@ class Member(Node):
 
 	@property
 	def kframeglobal(self):
-		"""Define the global stiffness matrix for a frame element"""
+		"""
+		Define the global stiffness matrix for a frame element
+		"""
 		return self.T * self.kframe * self.T.T
 		
 	@property
@@ -155,15 +166,17 @@ class Member(Node):
 	@property
 	def frameDoF(self):
 		# order u, theta, w
-		n = self.SN.n #this is the node number
+		n = self.SN.n  # this is the node number
 		sn = [3*n+1, 3*n+2, 3*n+3]
 		n = self.EN.n
 		en = [3*n+1, 3*n+2, 3*n+3]
 		return sn + en
 				
 		
-class Structure(Member, Node):
-	"""Define structure class"""
+class Structure(object):
+	"""
+	Define structure class
+	"""
 	def __init__(self, cross=None, material=None):
 		self.members = []
 		self.nodes = []
@@ -171,15 +184,17 @@ class Structure(Member, Node):
 		self.nMembers = 0
 		self.nDoF = 2
 		
-		if cross == None or material == None:
+		if cross is None or material is None:
 			raise ValueError('Please define default cross section or material type.')
 		else:	
 			self.defaultcross = cross
 			self.defaultmaterial = material		
 				
 	def addNode(self, x, y, z=0, cost=0, fixity='free'):
-		"""Add node to the structure"""
-		n = self.nNodes #node number
+		"""
+		Add node to the structure
+		"""
+		n = self.nNodes  # node number
 		node = Node(x, y, z=z, n=n, cost=cost, fixity=fixity)
 		self.nodes.append(node)
 		self.nNodes += 1
@@ -190,13 +205,15 @@ class Structure(Member, Node):
 		return node
 		
 	def addMember(self, SN, EN, material=None, cross=None):
-		"""Add member to the structure"""
+		"""
+		Add member to the structure
+		"""
 		SN = self.nodes[SN]
 		EN = self.nodes[EN]
 		
-		if material == None:
+		if material is None:
 			material=self.defaultmaterial
-		if cross == None:
+		if cross is None:
 			cross = self.defaultcross
 		
 		member = Member(SN, EN, material, cross)
@@ -205,9 +222,13 @@ class Structure(Member, Node):
 		
 		return member
 		
-	def plot(self, show=True,labels=False):
-		"""Plot the undeformed structure"""
-		plt.figure(1); plt.clf(); plt.grid(True)
+	def plot(self, show=True, labels=False):
+		"""
+		Plot the undeformed structure
+		"""
+		plt.figure(1)
+		plt.clf()
+		plt.grid(True)
 		
 		length = 0
 		for member in self.members:
@@ -216,7 +237,7 @@ class Structure(Member, Node):
 		
 		for i, node in enumerate(self.nodes):
 			plt.scatter([node.x], [node.y], color='#000000', s=100)
-			R = 0.2*length #length of support
+			R = 0.2*length  # length of support
 			
 			if node.xfix == 0:
 				x1 = node.x - R
@@ -238,13 +259,11 @@ class Structure(Member, Node):
 			x2 = member.EN.x
 			y2 = member.EN.y
 			plt.plot([x1, x2], [y1, y2], color='#923ab8', lw=3, zorder=-1)
-			
-		
-			
+
 		if labels == True:
 			for i, node in enumerate(self.nodes):
-				plt.Circle((node.x,node.y), 100, color='#ffffff')
-				plt.annotate(str(i), (node.x,node.y))
+				plt.Circle((node.x, node.y), 100, color='#ffffff')
+				plt.annotate(str(i), (node.x, node.y))
 				
 		plt.axis('equal'); 
 		if show == True:
@@ -252,7 +271,8 @@ class Structure(Member, Node):
 		
 	def plotDeformation(self, scale=100, nfig=1):
 		
-		plt.figure(nfig); self.plot(show=False)
+		plt.figure(nfig)
+		self.plot(show=False)
 		
 		for i, node in enumerate(self.nodes):
 			plt.scatter([node.x + scale*node.xdef], [node.y + scale*node.ydef], color='#d80000', s=100)

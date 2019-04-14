@@ -27,3 +27,4 @@ StructPy.egg-info/requires.txt
 /build
 /StructPy/__pychache__
 /Resources/__pychache__
+*.idea/*
