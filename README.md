@@ -1,5 +1,5 @@
 <p align="center">
-<img src="./Documentation/Figures/Logo.svg" alt="Project Logo">
+<img src="Logo.svg" alt="Project Logo">
 </p>
 <h1 align="center">Structural Analysis in Python</h1>
 <p align="center">
