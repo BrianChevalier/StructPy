@@ -55,39 +55,3 @@ class Frame(sc.Structure):
 			member.axial = member.axialstiff * np.matrix([l, m, -l, -m]) * np.asmatrix(d[ind]).T
 			
 		return d
-		
-		
-import structural_classes as sc
-import cross_sections as xs
-import materials as ma
-import Truss
-
-# Define material
-A992 = ma.Steel(E=2e11)
-
-# Define cross section
-xs1 = xs.generalSection(A=1e-2, Ix=5e-6)
-
-# define blank structure
-# the cross section and material are defaults for the members
-# we will add to this later
-s1 = Frame(cross=xs1, material=A992)
-
-# Add nodes to the structure
-s1.addNode(0, 0, xfix=0, yfix=0, fixity='pin')
-s1.addNode(0, 2)
-s1.addNode(1.5, 3)
-s1.addNode(3, 2)
-s1.addNode(3, 0, xfix=0, yfix=0, fixity='pin')
-
-# Add members to the structure
-s1.addMember(0, 1)
-s1.addMember(1, 2)
-s1.addMember(2, 3)
-s1.addMember(3, 4)
-
-s1.plot()
-
-Forces = np.matrix('0; 0; 0; 0; 0; 0; 0; 20000; 0; 0; 0; 0; 0; 0; 0')
-disp = s1.directStiffness(Forces)
-s1.plotDeformation(nfig=1, mag=1)

@@ -25,6 +25,10 @@ StructPy.egg-info/SOURCES.txt
 StructPy.egg-info/dependency_links.txt
 StructPy.egg-info/requires.txt
 /build
-/StructPy/__pychache__
-/Resources/__pychache__
+*__pychache__/*
+*Resources/*
 *.idea/*
+*/.ipynb_checkpoints/*
+*.ipynb_checkpoints/*
+*.DS_Store
+__ignore*

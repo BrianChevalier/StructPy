@@ -1,10 +1,11 @@
 language: python
 python:
 - 3.6
+- 3.7
 sudo: false
 script:
 - python setup.py install
-- python -m unittest discover -s 'Unit Tests' -p '*_tests.py'
+- bash run_tests.sh
 
 notifications:
   pushover:
