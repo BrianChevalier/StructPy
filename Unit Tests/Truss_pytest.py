@@ -120,8 +120,7 @@ def test_Truss_Ex_2_7_1():
 	loading = loading_from_yaml(testName)
 	
 	s2.directStiffness(loading)
-	s2.plot()
-	s2.plotDeformation(scale=1)
+
 	## log info
 	logging.info(f'\nChecking "{testName}":')
 	

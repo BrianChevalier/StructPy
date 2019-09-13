@@ -4,10 +4,73 @@ from StructPy import materials as ma
 import numpy as np
 import logging
 
+
+class TrussMember(sc.Member):
+    """
+    Define Truss Member class. Only allows axial loading.
+    """
+    def __init__(self, SN, EN, material=ma.Steel(), cross=xs.generalSection(), expectedaxial=None):
+        self.cross = cross
+        self.material = material
+
+        # assign start and end node properties
+        self.SN = SN
+        self.EN = EN
+
+        # the axial force
+        self.axial = 0
+        self.expectedaxial = expectedaxial
+
+    @property
+    def k(self):
+        """Global member stiffness matrix for truss"""
+        # direct stiffness method
+        l = self.unVec[0]
+        m = self.unVec[1]
+        n = self.unVec[2]
+
+        L = self.length
+        E = self.material.E
+        A = self.cross.A
+        a = (A*E)/L
+
+        T = np.matrix([[l, m, 0, 0], [0, 0, l, m]])
+        k = np.matrix([[1, -1], [-1, 1]])
+        k = a * (T.T * k * T)
+        return k
+
+    @property
+    def trussdof(self):
+        SNdof = [self.SN.n*2, self.SN.n*2+1]
+        ENdof = [self.EN.n*2, self.EN.n*2+1]
+        # This just tells the axial displacement numbering
+        # i.e. member 1 has d1, d2, d3, d4 for the start and end nodes
+        return SNdof + ENdof
+
+
 class Truss(sc.Structure):	
 	"""This class builds on the structure class adding truss solving 
 	methods"""
-					
+	
+	def addMember(self, SN, EN, material=None, cross=None, expectedaxial=None):
+		"""
+		Add member to the structure
+		"""
+		SN = self.nodes[SN]
+		EN = self.nodes[EN]
+
+		if material is None:
+			material=self.defaultmaterial
+		if cross is None:
+			cross = self.defaultcross
+		
+		member = TrussMember(SN, EN, material, cross, expectedaxial=expectedaxial)
+			
+		self.members.append(member)
+		self.nMembers += 1
+
+		return member
+	
 	@property
 	def K(self):
 		"""Build global structure stiffness matrix for a truss"""
