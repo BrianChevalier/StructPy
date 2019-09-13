@@ -1,3 +1,5 @@
 openpyxl
 matplotlib
 numpy
+pytest
+pyyaml

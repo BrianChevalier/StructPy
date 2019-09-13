@@ -9,6 +9,10 @@ class Node(object):
     >>> n1 = Node(0, 0)
     >>> print(n1)
     (0.0, 0.0)
+	>>> n1.fixity
+	'free'
+	>>> n1.cost
+	0
     """
     def __init__(self, x, y, z=0, n=None, cost=0, fixity='free'):
         self.x = x
@@ -16,6 +20,7 @@ class Node(object):
         self.z = z
         self.cost = cost
         self.n = n  # nodal number
+        self.fixity = fixity
 
         # Assign boundary conditions
         # N: normal force
@@ -41,9 +46,13 @@ class Node(object):
             self.xfix = 0
             self.yfix = 1
             self.theta = 0
-        elif fixity == 'roller':
+        elif fixity == 'roller': # moves left and right
             self.xfix = 1
             self.yfix = 0
+            self.theta = 1
+        elif fixity == 'yroller': #moves up and down
+            self.xfix = 0
+            self.yfix = 1
             self.theta = 1
         elif fixity == 'cont':
             self.xfix = 1
@@ -60,7 +69,7 @@ class Member(object):
     """
     Define Member class
     """
-    def __init__(self, SN, EN, material=ma.Steel(), cross=xs.generalSection()):
+    def __init__(self, SN, EN, material=ma.Steel(), cross=xs.generalSection(), expectedaxial=None):
         self.cross = cross
         self.material = material
 
@@ -70,6 +79,7 @@ class Member(object):
 
         # the axial force
         self.axial = 0
+        self.expectedaxial = expectedaxial
 
     @property
     def vector(self):
@@ -202,7 +212,7 @@ class Structure(object):
 
         return node
 
-    def addMember(self, SN, EN, material=None, cross=None):
+    def addMember(self, SN, EN, material=None, cross=None, expectedaxial=None):
         """
         Add member to the structure
         """
@@ -214,7 +224,7 @@ class Structure(object):
         if cross is None:
             cross = self.defaultcross
 
-        member = Member(SN, EN, material, cross)
+        member = Member(SN, EN, material, cross, expectedaxial=expectedaxial)
         self.members.append(member)
         self.nMembers += 1
 

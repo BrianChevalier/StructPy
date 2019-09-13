@@ -1,0 +1,33 @@
+Config: # Config data
+    Units:
+        Length: in.
+        Force: k
+
+Material: #Default material properties. Can be overriden per element
+    E: 290000
+
+XSection:
+    A: 10
+    
+Nodes:  # List of Nodes
+    - A: {x: 0, y: 15}
+    - B: {x: 10, y: 15}
+    - C: {x: 20, y: 15, fixity: pin}
+    - D: {x: 10, y: 7.5}
+    - E: {x: 20, y: 0, fixity: yroller}
+    
+Members:  # List of Members, and correct axial forces
+    - A,B: {axial: -2.6667}
+    - B,D: {axial: 4}
+    - B,C: {axial: -2.6667}
+    - C,D: {axial: -3.3333}
+    - C,E: {axial: -4}
+    - E,D: {axial: 6.6667}
+    - A,D: {axial: 3.3333}
+
+Loads:
+    - A: {x: 0, y: -2}
+    - B: {x: 0, y: -4}
+    - C: {x: 0, y: -2}
+    - D: {x: 0, y: 0.0}
+    - E: {x: 0, y: 0.0}

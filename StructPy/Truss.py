@@ -2,8 +2,7 @@ from StructPy import structural_classes as sc
 from StructPy import cross_sections as xs
 from StructPy import materials as ma
 import numpy as np
-
-import decimal
+import logging
 
 class Truss(sc.Structure):	
 	"""This class builds on the structure class adding truss solving 
@@ -28,7 +27,7 @@ class Truss(sc.Structure):
 					# i,j are used for global numbering
 					# this is a local to global transformation
 					K[i,j] += member.k[index1, index2]
-		
+
 		return np.asmatrix(K)
 
 	@property
@@ -57,6 +56,7 @@ class Truss(sc.Structure):
 		
 		D = np.linalg.solve(reducedK, reducedF)
 		d = self.BC.astype('float64') #make sure its not an int.
+		logging.info(d)
 		d[index] = D.flat
 				
 		for i, node in enumerate(self.nodes):
