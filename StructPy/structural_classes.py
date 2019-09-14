@@ -3,6 +3,11 @@ from StructPy import materials as ma
 import matplotlib.pyplot as plt
 import numpy as np
 
+try:
+	import yaml
+except ImportError:
+	raise ImportError('The library pyyaml is required to read a yaml file.')
+
 class Node(object):
 	"""
 	This defines the *Node* class.
@@ -174,6 +179,40 @@ class Structure(object):
 		else:
 			self.defaultcross = cross
 			self.defaultmaterial = material
+
+	@classmethod
+	def from_yaml_file(cls, filePath):
+
+		## Read in yaml file as a dictionary
+		with open(filePath, 'r') as stream:
+			try:
+				data = yaml.safe_load(stream)
+			except yaml.YAMLError as exc:
+				print(exc)
+
+		## Initialize structure
+		xsection = xs.generalSection(**data['XSection'])
+		material = ma.Custom(**data['Material'])
+		s1 = cls(cross=xsection, material=material)
+
+		## Add nodes
+		nodeMap = {} # map nodes to indicies
+		for i, node in enumerate(data['Nodes']):
+			for key, value in node.items():
+				try:
+					s1.addNode(value['x'], value['y'], fixity=value['fixity'])
+				except KeyError:
+					s1.addNode(value['x'], value['y'])
+
+				nodeMap.update({key: i})
+
+		## Add members
+		for member in data['Members']:
+			for key, value in member.items():
+				SN, EN = key.split(',')
+				s1.addMember(nodeMap[SN], nodeMap[EN], expectedaxial=value['axial'])
+
+		return s1
 
 	def addNode(self, x, y, z=0, cost=0, fixity='free'):
 		"""

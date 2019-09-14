@@ -1,3 +1,9 @@
+"""
+This is the StructPy Truss testing suite. This uses pytest and logs information to `Unit Tests/Truss_pytest.log`. All functions beginning with `test_` are functions run by pytest, other functions aid in testing.
+
+There are several example trusses in .yaml files. These are file formatted to store structure information. They are used for the purpose of easily testing many known solutions.
+"""
+
 from pytest import approx
 import yaml
 import logging
@@ -42,39 +48,6 @@ def test_solveTruss():
 	assert approx(s1.members[1].axial[0], 0.000001) == 0
 
 
-def from_yaml_file(filePath):
-	
-	## Read in yaml file as a dictionary
-	with open(filePath, 'r') as stream:
-		try:
-			data = yaml.safe_load(stream)
-		except yaml.YAMLError as exc:
-			print(exc)
-	
-	## Initialize structure
-	xsection = xs.generalSection(**data['XSection'])
-	material = ma.Custom(**data['Material'])
-	s1 = Truss.Truss(cross=xsection, material=material)
-	
-	## Add nodes
-	nodeMap = {} # map nodes to indicies
-	for i, node in enumerate(data['Nodes']):
-		for key, value in node.items():
-			try:
-				s1.addNode(value['x'], value['y'], fixity=value['fixity'])
-			except KeyError:
-				s1.addNode(value['x'], value['y'])
-			
-			nodeMap.update({key: i})
-			
-	## Add members
-	for member in data['Members']:
-		for key, value in member.items():
-			SN, EN = key.split(',')
-			s1.addMember(nodeMap[SN], nodeMap[EN], expectedaxial=value['axial'])
-	
-	return s1
-
 def loading_from_yaml(filePath):
 	with open(filePath, 'r') as stream:
 		try:
@@ -94,44 +67,25 @@ def loading_from_yaml(filePath):
 			loading[2*nodeMap[nodelabel]] = value['x']
 			loading[2*nodeMap[nodelabel]+1] = value['y']
 	
-					   
 	return loading
 	
-def test_Truss_Ex_2_7_2():
-	""" Example 2.7.2 Rajan, (page: 51)"""
-	testName = 'Unit Tests/Ex_2.7.2.yaml'
-	
-	s1 = from_yaml_file(testName)
-	s1.directStiffness(loading_from_yaml(testName))
-	
-	## log info
-	logging.info(f'\nChecking "{testName}":')
-	logging.info(f"{' '*10}| Computed | Expected")
-	for i, member in enumerate(s1.members):
-		
-		logging.info(f'Member {i:<2} | {member.axial[0, 0]:<8.3} | {member.expectedaxial}')
-		assert approx(member.axial[0], 0.001) == member.expectedaxial
-	
-def test_Truss_Ex_2_7_1():
-	""" Example 2.7.1 Rajan, (page: 47)"""
-	testName = 'Unit Tests/Ex_2.7.1.yaml'
-	
-	s2 = from_yaml_file(testName)
-	loading = loading_from_yaml(testName)
-	
-	s2.directStiffness(loading)
 
-	## log info
-	logging.info(f'\nChecking "{testName}":')
+def Truss_Test_From_File(fileName):
+	""" Test Example Yaml Files """
 	
-	logging.info(loading)
-	
-	for node in s2.nodes:
-		logging.info(node.ydef)
-	
-	logging.info(f"\n{' '*10}| Computed | Expected | Length")
-	for i, member in enumerate(s2.members):
-		logging.info(f'Member {i:<2} | {member.axial[0, 0]:<8.3} | {member.expectedaxial:<8} | {member.length:<8.3}')
+	s2 = Truss.Truss.from_yaml_file(fileName)
+	loading = loading_from_yaml(fileName)
+	s2.directStiffness(loading)
         
 	for i, member in enumerate(s2.members):
 		assert approx(member.axial[0], 0.001) == member.expectedaxial
+
+
+def test_2_7_1():
+	Truss_Test_From_File('Unit Tests/Ex_2.7.1.yaml')
+
+def test_2_7_2():
+	Truss_Test_From_File('Unit Tests/Ex_2.7.2.yaml')
+
+def test_6_2_4():
+	Truss_Test_From_File('Unit Tests/Ex_6.2.4.yaml')
