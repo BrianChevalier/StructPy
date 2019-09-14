@@ -19,10 +19,9 @@ class Node(object):
 	>>> n1.cost
 	0
 	"""
-	def __init__(self, x, y, z=0, n=None, cost=0, fixity='free'):
+	def __init__(self, x, y, n=None, cost=0, fixity='free'):
 		self.x = x
 		self.y = y
-		self.z = z
 		self.cost = cost
 		self.n = n  # nodal number
 		self.fixity = fixity
@@ -90,8 +89,7 @@ class Member(object):
 	def vector(self):
 		e1 = self.EN.x - self.SN.x
 		e2 = self.EN.y - self.SN.y
-		e3 = self.EN.z - self.SN.z
-		return np.array([e1, e2, e3])
+		return np.array([e1, e2])
 
 	@property
 	def length(self):
@@ -100,64 +98,6 @@ class Member(object):
 	@property
 	def unVec(self):
 		return self.vector/self.length
-
-	@property
-	def kframe(self):
-		"""
-		Local member stiffness matrix for frame
-		"""
-		L = self.length
-		E = self.material.E
-		A = self.cross.A
-		I = self.cross.Ix
-
-		a = (A*E)/L
-		b = (E*I)/L
-		c = (E*I)/L**2
-		d = (E*I)/L**3
-
-		v1 = [a,  0,	 0,	-a, 0,	 0   ]
-		v2 = [0,  12*d,  6*c,  0,  -12*d, 6*c ]
-		v3 = [0,  6*c,   4*b,  0,  -6*c,  2*b ]
-		v4 = [-a, 0,	 0,	a,  0,	 0   ]
-		v5 = [0,  -12*d, -6*c, 0,  12*d,  -6*c]
-		v6 = [0,  6*c,   2*b,  0,  -6*c,   4*b]
-
-		return np.matrix([v1, v2, v3, v4, v5, v6])
-
-	@property
-	def T(self):
-		"""
-		Global transformation matrix for 2-D frame
-		"""
-		l = self.unVec[0]
-		m = self.unVec[1]
-		n = self.unVec[2]
-
-		v1 = [l,  m, 0, 0,  0, 0]
-		v2 = [-m, l, 0, 0,  0, 0]
-		v3 = [0,  0, 1, 0,  0, 0]
-		v4 = [0,  0, 0, l,  m, 0]
-		v5 = [0,  0, 0, -m, l, 0]
-		v6 = [0,  0, 0, 0,  0, 1]
-
-		return np.matrix([v1, v2, v3, v4, v5, v6])
-
-	@property
-	def kframeglobal(self):
-		"""
-		Define the global stiffness matrix for a frame element
-		"""
-		return self.T * self.kframe * self.T.T
-
-	@property
-	def frameDoF(self):
-		# order u, theta, w
-		n = self.SN.n  # this is the node number
-		sn = [3*n+1, 3*n+2, 3*n+3]
-		n = self.EN.n
-		en = [3*n+1, 3*n+2, 3*n+3]
-		return sn + en
 	
 	def __repr__(self):
 		return f'{self.__class__.__name__}({self.SN}, {self.EN})'
@@ -214,17 +154,14 @@ class Structure(object):
 
 		return s1
 
-	def addNode(self, x, y, z=0, cost=0, fixity='free'):
+	def addNode(self, x, y, cost=0, fixity='free'):
 		"""
 		Add node to the structure
 		"""
 		n = self.nNodes  # node number
-		node = Node(x, y, z=z, n=n, cost=cost, fixity=fixity)
+		node = Node(x, y, n=n, cost=cost, fixity=fixity)
 		self.nodes.append(node)
 		self.nNodes += 1
-
-		if z !=0:
-			self.nDoF = 3
 
 		return node
 

@@ -9,25 +9,13 @@ class TrussMember(sc.Member):
     """
     Define Truss Member class. Only allows axial loading.
     """
-    def __init__(self, SN, EN, material=ma.Steel(), cross=xs.generalSection(), expectedaxial=None):
-        self.cross = cross
-        self.material = material
-
-        # assign start and end node properties
-        self.SN = SN
-        self.EN = EN
-
-        # the axial force
-        self.axial = 0
-        self.expectedaxial = expectedaxial
-
+	
     @property
     def k(self):
         """Global member stiffness matrix for truss"""
         # direct stiffness method
         l = self.unVec[0]
         m = self.unVec[1]
-        n = self.unVec[2]
 
         L = self.length
         E = self.material.E
@@ -135,7 +123,6 @@ class Truss(sc.Structure):
 			
 			l = member.unVec[0]
 			m = member.unVec[1]
-			n = member.unVec[2]
 			
 			ind = member.trussdof
 			A = member.cross.A
