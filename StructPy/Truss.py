@@ -117,6 +117,11 @@ class Truss(sc.Structure):
 		reducedK = self.K[index,:][:,index]
 		reducedF = loading[index]
 		
+		eigs, vecs = np.linalg.eig(reducedK)
+		if np.isclose(eigs, 0).any() == True:
+			raise ValueError('Structure is unstable.')
+			logging.warning(eigs)
+		
 		D = np.linalg.solve(reducedK, reducedF)
 		d = self.BC.astype('float64') #make sure its not an int.
 		logging.info(d)

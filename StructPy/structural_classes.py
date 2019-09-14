@@ -67,7 +67,7 @@ class Node(object):
 
 class Member(object):
 	"""
-	Define Member class
+	Define Member base class
 	"""
 	def __init__(self, SN, EN, material=ma.Steel(), cross=xs.generalSection(), expectedaxial=None):
 		self.cross = cross
