@@ -22,9 +22,9 @@ class TrussMember(sc.Member):
         A = self.cross.A
         a = (A*E)/L
 
-        T = np.matrix([[l, m, 0, 0], [0, 0, l, m]])
-        k = np.matrix([[1, -1], [-1, 1]])
-        k = a * (T.T * k * T)
+        T = np.array([[l, m, 0, 0], [0, 0, l, m]])
+        k = np.array([[1, -1], [-1, 1]])
+        k = a * (T.T @ k @ T)
         return k
 
     @property
@@ -79,7 +79,7 @@ class Truss(sc.Structure):
 					# this is a local to global transformation
 					K[i,j] += member.k[index1, index2]
 
-		return np.asmatrix(K)
+		return np.array(K)
 
 	@property
 	def BC(self):
@@ -129,7 +129,7 @@ class Truss(sc.Structure):
 			E = member.material.E
 			L = member.length
 			
-			member.axial = (A*E)/L * np.matrix([l, m, -l, -m]) * np.asmatrix(d[ind]).T
+			member.axial = (A*E)/L * np.array([l, m, -l, -m]) @ np.array(d[ind]).T
 			
 		return d
 		

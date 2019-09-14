@@ -45,7 +45,7 @@ def test_solveTruss():
 	s1.directStiffness(Forces)
 	
 	#this should be a zero force member
-	assert approx(s1.members[1].axial[0], 0.000001) == 0
+	assert approx(s1.members[1].axial, 0.000001) == 0
 
 
 def loading_from_yaml(filePath):
@@ -78,7 +78,7 @@ def Truss_Test_From_File(fileName):
 	s2.directStiffness(loading)
         
 	for i, member in enumerate(s2.members):
-		assert approx(member.axial[0], 0.001) == member.expectedaxial
+		assert approx(member.axial, 0.001) == member.expectedaxial
 
 
 def test_2_7_1():
