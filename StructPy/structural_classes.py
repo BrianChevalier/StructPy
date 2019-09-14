@@ -25,45 +25,22 @@ class Node(object):
 		self.cost = cost
 		self.n = n  # nodal number
 		self.fixity = fixity
-
-		# Assign boundary conditions
-		# N: normal force
-		# V: shear force
-		# M: moment
-		# u: axial displacement
-		# w: transverse displacement
-		# theta: rotation (rate of change of w)
-
-		if fixity == 'free':
-			self.xfix = 1
-			self.yfix = 1
-			self.theta = 1
-		elif fixity == 'fixed':
-			self.xfix = 0
-			self.yfix = 0
-			self.theta = 0
-		elif fixity == 'pin':
-			self.xfix = 0
-			self.yfix = 0
-			self.theta = 1
-		elif fixity == 'wallslider':
-			self.xfix = 0
-			self.yfix = 1
-			self.theta = 0
-		elif fixity == 'roller': # moves left and right
-			self.xfix = 1
-			self.yfix = 0
-			self.theta = 1
-		elif fixity == 'yroller': #moves up and down
-			self.xfix = 0
-			self.yfix = 1
-			self.theta = 1
-		elif fixity == 'cont':
-			self.xfix = 1
-			self.yfix = 0
-			self.theta = 1
+		
+		# 1: unrestrained, 0: restrained
+		fixities = {   # x, y, θ
+			'free'   :  (1, 1, 1),
+			'fixed'  :  (0, 0, 0),
+			'pin'    :  (0, 0, 1),
+			'roller' :  (1, 0, 1),
+			'yroller':  (0, 1, 1),
+			'slide'  :  (0, 1, 0)
+		}
+		
+		if fixity in fixities:
+			self.xfix, self.yfix, self.theta = fixities[fixity]
 		else:
-			raise ValueError('Support type undefined. Please use a valid support type.')
+			validKeys = ', '.join([str(key) for key in fixities.keys()])
+			raise ValueError(f'Not a valid nodal support type. Valid types: {validKeys}')
 
 	def __str__(self):
 		return f"({self.x:1.1f}, {self.y:1.1f})"
