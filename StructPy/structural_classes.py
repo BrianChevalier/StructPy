@@ -28,12 +28,12 @@ class Node(object):
 		
 		# 1: unrestrained, 0: restrained
 		fixities = {   # x, y, θ
-			'free'   :  (1, 1, 1),
-			'fixed'  :  (0, 0, 0),
-			'pin'    :  (0, 0, 1),
-			'roller' :  (1, 0, 1),
-			'yroller':  (0, 1, 1),
-			'slide'  :  (0, 1, 0)
+			'free'   :  (1.0, 1.0, 1.0),
+			'fixed'  :  (0.0, 0.0, 0.0),
+			'pin'    :  (0.0, 0.0, 1.0),
+			'roller' :  (1.0, 0.0, 1.0),
+			'yroller':  (0.0, 1.0, 1.0),
+			'slide'  :  (0.0, 1.0, 0.0)
 		}
 		
 		if fixity in fixities:
@@ -75,6 +75,13 @@ class Member(object):
 	@property
 	def unVec(self):
 		return self.vector/self.length
+
+	@property
+	def kglobal(self):
+		"""
+		Define the global stiffness matrix for a frame element
+		"""
+		return self.T.T @ self.k @ self.T
 	
 	def __repr__(self):
 		return f'{self.__class__.__name__}({self.SN}, {self.EN})'
@@ -89,7 +96,6 @@ class Structure(object):
 		self.nodes = []
 		self.nNodes = 0
 		self.nMembers = 0
-		self.nDoF = 2
 
 		if cross is None or material is None:
 			raise ValueError('Please define default cross section or material type.')
@@ -144,14 +150,17 @@ class Structure(object):
 	
 	@property
 	def reducedK(self):
-		index = self.BC == 1
-		return self.K[index,:][:,index]
+		return self.K[self.unrestrainedDoF, :][:, self.unrestrainedDoF]
+	
+	@property
+	def unrestrainedDoF(self):
+		return self.BC == 1
 	
 	@property
 	def K(self):
 		"""Build global structure stiffness matrix"""
 		
-		global_nDoF = self.__class__.nDoFPerNode*self.nNodes
+		global_nDoF = self.__class__.nDoFPerNode * self.nNodes
 		
 		K = np.zeros((global_nDoF, global_nDoF))
 		
@@ -167,7 +176,6 @@ class Structure(object):
 					K[i,j] += member.kglobal[index1, index2]
 		
 		return K
-	
 	
 	def plot(self, show=True, labels=False):
 		"""

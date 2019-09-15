@@ -3,13 +3,14 @@ import StructPy.cross_sections as xs
 import StructPy.materials as ma
 import numpy as np
 
+def flatten(items):
+	return sum(items, [])
+
 class FrameMember(sc.Member):
 	
 	@property
 	def k(self):
-		"""
-		Local member stiffness matrix for frame
-		"""
+		"""Local member stiffness matrix"""
 		L = self.length
 		E = self.material.E
 		A = self.cross.A
@@ -31,9 +32,7 @@ class FrameMember(sc.Member):
 
 	@property
 	def T(self):
-		"""
-		Global transformation matrix for 2-D frame
-		"""
+		"""Local to global transformation matrix"""
 		l = self.unVec[0]
 		m = self.unVec[1]
 
@@ -47,20 +46,13 @@ class FrameMember(sc.Member):
 		])
 
 	@property
-	def kglobal(self):
-		"""
-		Define the global stiffness matrix for a frame element
-		"""
-		return self.T.T @ self.k @ self.T
-
-	@property
 	def DoF(self):
-		sn = self.SN.n  # this is the node number
-		en = self.EN.n
+		SN = self.SN.n  # this is the node number
+		EN = self.EN.n
 		
 		return [
-			3*sn, 3*sn+1, 3*sn+2,
-			3*en, 3*en+1, 3*en+2
+			3*SN, 3*SN + 1, 3*SN + 2,
+			3*EN, 3*EN + 1, 3*EN + 2
 		]
 	
 
@@ -90,22 +82,19 @@ class Frame(sc.Structure):
 	@property
 	def BC(self):
 		"""Define Boundary Condition array"""
-		BC = []
-		for node in self.nodes:
-			BC.extend([node.xfix, node.yfix, node.theta])		
-		return np.array(BC)
+		return np.array( flatten( [ [node.xfix, node.yfix, node.theta] for node in self.nodes] ) )
 	
 	def directStiffness(self, loading):
-		index = self.BC == 1
-		reducedF = loading[index]
 		
-		D = np.linalg.solve(self.reducedK, reducedF)
-		d = self.BC.astype('float64') #make sure its not an int.
-		d[index] = D
-				
+		reducedF = loading[self.unrestrainedDoF]
+		reducedD = np.linalg.solve(self.reducedK, reducedF)
+		
+		globalD = self.BC
+		globalD[self.unrestrainedDoF] = reducedD  #substitute actual deformations
+		
 		for i, node in enumerate(self.nodes):
-			node.xdef = d[3*node.n]
-			node.ydef = d[3*node.n + 1]
-			node.thetadef = d[3*node.n + 2]
+			node.xdef = globalD[3*node.n]
+			node.ydef = globalD[3*node.n + 1]
+			node.thetadef = globalD[3*node.n + 2]
 			
-		return d
+		return globalD

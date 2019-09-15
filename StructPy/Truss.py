@@ -4,34 +4,48 @@ from StructPy import materials as ma
 import numpy as np
 import logging
 
+def flatten(items):
+	return sum(items, [])
 
 class TrussMember(sc.Member):
-    """
-    Define Truss Member class. Only allows axial loading.
-    """
+	"""
+	Define Truss Member class. Only allows axial loading.
+	"""
 	
-    @property
-    def kglobal(self):
-        """Global member stiffness matrix for truss"""
-        # direct stiffness method
-        l = self.unVec[0]
-        m = self.unVec[1]
+	@property
+	def k(self):
+		"""Local member stiffness matrix"""
+		# direct stiffness method
 
-        L = self.length
-        E = self.material.E
-        A = self.cross.A
-        a = (A*E)/L
+		L = self.length
+		E = self.material.E
+		A = self.cross.A
+		a = (A*E)/L
 
-        T = np.array([[l, m, 0, 0], [0, 0, l, m]])
-        k = np.array([[1, -1], [-1, 1]])
-        k = a * (T.T @ k @ T)
-        return k
+		return a * np.array([
+			[1, -1],
+			[-1, 1]
+		])
+	
+	@property
+	def T(self):
+		"""Local to global transformation matrix"""
+		l = self.unVec[0]
+		m = self.unVec[1]
+		return np.array([
+			[l, m, 0, 0],
+			[0, 0, l, m]
+		])
 
-    @property
-    def DoF(self):
-        SNdof = [self.SN.n*2, self.SN.n*2+1]
-        ENdof = [self.EN.n*2, self.EN.n*2+1]
-        return SNdof + ENdof
+	@property
+	def DoF(self):
+		SN = self.SN.n  # this is the node number
+		EN = self.EN.n
+		
+		return [
+			SN*2, SN*2 + 1,
+			EN*2, EN*2 + 1
+		]
 
 
 class Truss(sc.Structure):	
@@ -63,39 +77,26 @@ class Truss(sc.Structure):
 	@property
 	def BC(self):
 		"""Define Boundary Condition array"""
-		BC = []
-		for node in self.nodes:
-			x = node.xfix
-			y = node.yfix
-			BC.append(x)
-			BC.append(y)
-				
-		return np.array(BC)
+		return np.array( flatten( [ [node.xfix, node.yfix] for node in self.nodes] ) )
 	
 	def directStiffness(self, loading):
 		"""This executes the direct stiffness method 
 		for the structure given some loading"""
-		
-		if type(loading) == type([]):
-			raise TypeError("input must be np.array")
-		
-		# rows with displacement
-		index = self.BC == 1
-		reducedF = loading[index]
 		
 		eigs, vecs = np.linalg.eig(self.reducedK)
 		if np.isclose(eigs, 0).any() == True:
 			raise ValueError('Structure is unstable.')
 			logging.warning(eigs)
 		
-		D = np.linalg.solve(self.reducedK, reducedF)
-		d = self.BC.astype('float64') #make sure its not an int.
-		logging.info(d)
-		d[index] = D
+		reducedF = loading[self.unrestrainedDoF]
+		reducedD = np.linalg.solve(self.reducedK, reducedF)
+		
+		globalD = self.BC
+		globalD[self.unrestrainedDoF] = reducedD
 				
 		for i, node in enumerate(self.nodes):
-			node.xdef = d[2*node.n]
-			node.ydef = d[2*node.n + 1]
+			node.xdef = globalD[2*node.n]
+			node.ydef = globalD[2*node.n + 1]
 		
 		for i, member in enumerate(self.members):
 			
@@ -107,21 +108,7 @@ class Truss(sc.Structure):
 			E = member.material.E
 			L = member.length
 			
-			member.axial = (A*E)/L * np.array([l, m, -l, -m]) @ np.array(d[ind]).T
+			member.axial = (A*E)/L * np.array([l, m, -l, -m]) @ np.array(globalD[ind]).T
 			
-		return d
-		
-	@property
-	def selfWeightAtNodes(self):
-		"""
-		This outputs a numpy array of the equivalent nodal loading caused by the
-		self weight of the truss in the units of the self weight property
-		"""
-		nodes = np.zeros(self.nNodes)
-		for member in self.members:
-			nodes[member.SN.n] += 0.5 * member.length * member.cross.W
-			nodes[member.EN.n] += 0.5 * member.length * member.cross.W
-			
-		return nodes
-		
+		return globalD
 		
