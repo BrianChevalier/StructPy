@@ -11,7 +11,7 @@ status1=$?
 
 # This runs all available doctests
 printf "\n\n\n\n====== Running Doc Tests ======\n\n"
-python3 -m doctest StructPy/*.py
+python3 -m doctest StructPy/*.py -v
 status2=$?
 
 
