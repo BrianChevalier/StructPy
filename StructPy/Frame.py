@@ -57,7 +57,7 @@ class FrameMember(sc.Member):
 	
 
 class Frame(sc.Structure):
-	
+	"""Frame class"""
 	nDoFPerNode = 3
 	
 	def addMember(self, SN, EN, material=None, cross=None, expectedaxial=None):

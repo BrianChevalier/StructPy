@@ -161,19 +161,10 @@ class Structure(object):
 		"""Build global structure stiffness matrix"""
 		
 		global_nDoF = self.__class__.nDoFPerNode * self.nNodes
-		
-		K = np.zeros((global_nDoF, global_nDoF))
+		K = np.zeros([global_nDoF, global_nDoF])
 		
 		for member in self.members:
-			
-			ds = member.DoF
-			
-			for index1, i in enumerate(ds):
-				for index2, j in enumerate(ds):
-					#index is used for local numbering
-					#i,j are used for global numbering
-					#this is a local to global transformation
-					K[i,j] += member.kglobal[index1, index2]
+			K[np.ix_(member.DoF, member.DoF)] += member.kglobal
 		
 		return K
 	
