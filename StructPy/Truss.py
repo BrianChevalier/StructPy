@@ -92,7 +92,12 @@ class Truss(sc.Structure):
 			BC.append(y)
 				
 		return np.array(BC)
-		
+	
+	@property
+	def reducedK(self):
+		index = self.BC == 1
+		return self.K[index,:][:,index]
+	
 	def directStiffness(self, loading):
 		"""This executes the direct stiffness method 
 		for the structure given some loading"""
@@ -102,18 +107,17 @@ class Truss(sc.Structure):
 		
 		# rows with displacement
 		index = self.BC == 1
-		reducedK = self.K[index,:][:,index]
 		reducedF = loading[index]
 		
-		eigs, vecs = np.linalg.eig(reducedK)
+		eigs, vecs = np.linalg.eig(self.reducedK)
 		if np.isclose(eigs, 0).any() == True:
 			raise ValueError('Structure is unstable.')
 			logging.warning(eigs)
 		
-		D = np.linalg.solve(reducedK, reducedF)
+		D = np.linalg.solve(self.reducedK, reducedF)
 		d = self.BC.astype('float64') #make sure its not an int.
 		logging.info(d)
-		d[index] = D.flat
+		d[index] = D
 				
 		for i, node in enumerate(self.nodes):
 			node.xdef = d[2*node.n]

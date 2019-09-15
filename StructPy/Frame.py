@@ -27,7 +27,7 @@ class FrameMember(sc.Member):
 		v5 = [0,  -12*d, -6*c, 0,  12*d,  -6*c]
 		v6 = [0,  6*c,   2*b,  0,  -6*c,   4*b]
 
-		return np.matrix([v1, v2, v3, v4, v5, v6])
+		return np.array([v1, v2, v3, v4, v5, v6])
 
 	@property
 	def T(self):
@@ -44,22 +44,21 @@ class FrameMember(sc.Member):
 		v5 = [0,  0, 0, -m, l, 0]
 		v6 = [0,  0, 0, 0,  0, 1]
 
-		return np.matrix([v1, v2, v3, v4, v5, v6])
+		return np.array([v1, v2, v3, v4, v5, v6])
 
 	@property
 	def kglobal(self):
 		"""
 		Define the global stiffness matrix for a frame element
 		"""
-		return self.T * self.k * self.T.T
+		return self.T @ self.k @ self.T.T
 
 	@property
 	def frameDoF(self):
-		# order u, theta, w
 		n = self.SN.n  # this is the node number
-		sn = [3*n+1, 3*n+2, 3*n+3]
+		sn = [3*n, 3*n+1, 3*n+2]
 		n = self.EN.n
-		en = [3*n+1, 3*n+2, 3*n+3]
+		en = [3*n, 3*n+1, 3*n+2]
 		return sn + en
 	
 
@@ -102,22 +101,26 @@ class Frame(sc.Structure):
 					#this is a local to global transformation
 					K[i,j] += member.kglobal[index1, index2]
 		
-		return np.asmatrix(K)
+		return np.array(K)
 		
 	@property
 	def BC(self):
 		"""Define Boundary Condition array"""
 		BC = []
 		for node in self.nodes:
-			BC.extend([node.u, node.w, node.theta])		
+			BC.extend([node.xfix, node.yfix, node.theta])		
 		return np.array(BC)
-		
+	
+	@property
+	def reducedK(self):
+		index = self.BC == 1
+		return self.K[index, :][:, index]
+	
 	def directStiffness(self, loading):
 		index = self.BC == 1
-		reducedK = self.K[index,:][:,index]
 		reducedF = loading[index]
 		
-		D = np.linalg.solve(reducedK, reducedF)
+		D = np.linalg.solve(self.reducedK, reducedF)
 		d = self.BC.astype('float64') #make sure its not an int.
 		d[index] = D
 				
@@ -126,10 +129,10 @@ class Frame(sc.Structure):
 			node.ydef = d[3*node.n + 1]
 			node.thetadef = d[3*node.n + 2]
 		
-		for i, member in enumerate(self.members):
-			l = member.unVec[0]
-			m = member.unVec[1]
-			ind = member.trussdof
-			member.axial = member.axialstiff * np.matrix([l, m, -l, -m]) * np.asmatrix(d[ind]).T
+# 		for i, member in enumerate(self.members):
+# 			l = member.unVec[0]
+# 			m = member.unVec[1]
+# 			ind = member.frameDoF
+# 			member.axial = member.axialstiff * np.array([l, m, -l, -m]) @ np.array(d[ind]).T
 			
 		return d

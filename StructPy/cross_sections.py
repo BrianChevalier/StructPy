@@ -114,7 +114,7 @@ class generalSection(Section):
 	"""This is a general cross section. Define custom properties
 	you want to use without defining points"""
 
-	def __init__(self, Ix=1, Q=1, A=1):
+	def __init__(self, Ix=None, Q=None, A=None):
 		self.Ix = Ix
 		self.Q = Q
 		self.A = A
