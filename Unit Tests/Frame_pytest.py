@@ -19,6 +19,9 @@ import StructPy.materials as ma
 import StructPy.Frame as Frame
 import numpy as np
 
+def isSymmetric(a, rtol=1e-05, atol=1e-08):
+    return np.allclose(a, a.T, rtol=rtol, atol=atol)
+
 def test_basic():
 	xs1 = xs.generalSection(A=1, Ix=1)
 	ma1 = ma.Custom(E=29000)
@@ -28,10 +31,12 @@ def test_basic():
 	f1.addNode(10, 0)
 	f1.addMember(0, 1)
 	
+	assert isSymmetric(f1.K)
+	assert isSymmetric(f1.members[0].k)
 	assert (f1.K == f1.members[0].k).all()
 	assert (f1.K == f1.members[0].kglobal).all()
 
-def test_Ex_6_2_5():
+def test_6_2_5():
 	"""
 	Continuous Beam (Rajan, pg. 369)
 	"""
@@ -50,8 +55,22 @@ def test_Ex_6_2_5():
 	# node, x, y, theta
 	# 0
 	# 1
-	loading = np.array([0, -2000, -666.66667,
-						0, -5000, 666.66667-1500,
+	loading = np.array([0, -2000, -666.6666667,
+						0, -5000,  -833.3333333333333333333333333,
 						0, -3000, 1500])
 	
 	f1.directStiffness(loading)
+	
+	handCalc = 10**7 * np.array([
+		[166.7, 0,    -66.7, 0    ],
+		[0,     6.67, 0,     1.33 ],
+		[-66.7, 0,    66.7,  0    ],
+		[0,     1.33, 0,     2.67 ]
+	])
+	
+	assert isSymmetric(f1.K)
+	assert np.allclose(f1.reducedK, handCalc, 0.01)
+	assert f1.nodes[1].xdef == 0
+	assert approx(f1.nodes[2].thetadef, 0.01) == 6.92851 * 10**(-5)
+	assert approx(f1.nodes[1].thetadef, 0.01) == -2.63092*10**(-5)
+	

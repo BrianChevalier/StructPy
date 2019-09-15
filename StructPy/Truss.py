@@ -11,7 +11,7 @@ class TrussMember(sc.Member):
     """
 	
     @property
-    def k(self):
+    def kglobal(self):
         """Global member stiffness matrix for truss"""
         # direct stiffness method
         l = self.unVec[0]
@@ -28,17 +28,18 @@ class TrussMember(sc.Member):
         return k
 
     @property
-    def trussdof(self):
+    def DoF(self):
         SNdof = [self.SN.n*2, self.SN.n*2+1]
         ENdof = [self.EN.n*2, self.EN.n*2+1]
-        # This just tells the axial displacement numbering
-        # i.e. member 1 has d1, d2, d3, d4 for the start and end nodes
         return SNdof + ENdof
 
 
 class Truss(sc.Structure):	
 	"""This class builds on the structure class adding truss solving 
 	methods"""
+	
+	#Number of degrees of freedom for this structure type in the global coordinate system
+	nDoFPerNode = 2
 	
 	def addMember(self, SN, EN, material=None, cross=None, expectedaxial=None):
 		"""
@@ -58,28 +59,6 @@ class Truss(sc.Structure):
 		self.nMembers += 1
 
 		return member
-	
-	@property
-	def K(self):
-		"""Build global structure stiffness matrix for a truss"""
-		
-		K = np.zeros((2 * self.nNodes, 2 * self.nNodes))
-		
-		for member in self.members:
-			# this generates the correct numbering for nodal dof
-			SNdof = [member.SN.n*2, member.SN.n*2+1]
-			ENdof = [member.EN.n*2, member.EN.n*2+1]
-			
-			ds = SNdof + ENdof
-			
-			for index1, i in enumerate(ds):
-				for index2, j in enumerate(ds):
-					# index is used for local numbering
-					# i,j are used for global numbering
-					# this is a local to global transformation
-					K[i,j] += member.k[index1, index2]
-
-		return np.array(K)
 
 	@property
 	def BC(self):
@@ -92,11 +71,6 @@ class Truss(sc.Structure):
 			BC.append(y)
 				
 		return np.array(BC)
-	
-	@property
-	def reducedK(self):
-		index = self.BC == 1
-		return self.K[index,:][:,index]
 	
 	def directStiffness(self, loading):
 		"""This executes the direct stiffness method 
@@ -128,7 +102,7 @@ class Truss(sc.Structure):
 			l = member.unVec[0]
 			m = member.unVec[1]
 			
-			ind = member.trussdof
+			ind = member.DoF
 			A = member.cross.A
 			E = member.material.E
 			L = member.length

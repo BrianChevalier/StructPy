@@ -19,15 +19,15 @@ class FrameMember(sc.Member):
 		b = (E*I)/L
 		c = (E*I)/L**2
 		d = (E*I)/L**3
-
-		v1 = [a,  0,	 0,	-a, 0,	 0   ]
-		v2 = [0,  12*d,  6*c,  0,  -12*d, 6*c ]
-		v3 = [0,  6*c,   4*b,  0,  -6*c,  2*b ]
-		v4 = [-a, 0,	 0,	a,  0,	 0   ]
-		v5 = [0,  -12*d, -6*c, 0,  12*d,  -6*c]
-		v6 = [0,  6*c,   2*b,  0,  -6*c,   4*b]
-
-		return np.array([v1, v2, v3, v4, v5, v6])
+		
+		return np.array([
+			[ a,  0,     0,    -a, 0,     0    ],
+			[ 0,  12*d,  6*c,  0,  -12*d, 6*c  ],
+			[ 0,  6*c,   4*b,  0,  -6*c,  2*b  ],
+			[ -a, 0,     0,    a,  0,     0    ],
+			[ 0,  -12*d, -6*c, 0,  12*d,  -6*c ],
+			[ 0,  6*c,   2*b,  0,  -6*c,   4*b ]
+		])
 
 	@property
 	def T(self):
@@ -37,32 +37,36 @@ class FrameMember(sc.Member):
 		l = self.unVec[0]
 		m = self.unVec[1]
 
-		v1 = [l,  m, 0, 0,  0, 0]
-		v2 = [-m, l, 0, 0,  0, 0]
-		v3 = [0,  0, 1, 0,  0, 0]
-		v4 = [0,  0, 0, l,  m, 0]
-		v5 = [0,  0, 0, -m, l, 0]
-		v6 = [0,  0, 0, 0,  0, 1]
-
-		return np.array([v1, v2, v3, v4, v5, v6])
+		return np.array([
+			[l,  m, 0, 0,  0, 0],
+			[-m, l, 0, 0,  0, 0],
+			[0,  0, 1, 0,  0, 0],
+			[0,  0, 0, l,  m, 0],
+			[0,  0, 0, -m, l, 0],
+			[0,  0, 0, 0,  0, 1]
+		])
 
 	@property
 	def kglobal(self):
 		"""
 		Define the global stiffness matrix for a frame element
 		"""
-		return self.T @ self.k @ self.T.T
+		return self.T.T @ self.k @ self.T
 
 	@property
-	def frameDoF(self):
-		n = self.SN.n  # this is the node number
-		sn = [3*n, 3*n+1, 3*n+2]
-		n = self.EN.n
-		en = [3*n, 3*n+1, 3*n+2]
-		return sn + en
+	def DoF(self):
+		sn = self.SN.n  # this is the node number
+		en = self.EN.n
+		
+		return [
+			3*sn, 3*sn+1, 3*sn+2,
+			3*en, 3*en+1, 3*en+2
+		]
 	
 
 class Frame(sc.Structure):
+	
+	nDoFPerNode = 3
 	
 	def addMember(self, SN, EN, material=None, cross=None, expectedaxial=None):
 		"""
@@ -82,26 +86,6 @@ class Frame(sc.Structure):
 		self.nMembers += 1
 
 		return member
-	
-	@property
-	def K(self):
-		"""Build global structure stiffness matrix"""
-		K = np.zeros((3*self.nNodes, 3*self.nNodes))
-		for member in self.members:
-			
-			SNdof = [member.SN.n*3, member.SN.n*3+1, member.SN.n*3+2]
-			ENdof = [member.EN.n*3, member.EN.n*3+1, member.EN.n*3+2]
-			
-			ds = SNdof + ENdof
-			
-			for index1, i in enumerate(ds):
-				for index2, j in enumerate(ds):
-					#index is used for local numbering
-					#i,j are used for global numbering
-					#this is a local to global transformation
-					K[i,j] += member.kglobal[index1, index2]
-		
-		return np.array(K)
 		
 	@property
 	def BC(self):
@@ -110,11 +94,6 @@ class Frame(sc.Structure):
 		for node in self.nodes:
 			BC.extend([node.xfix, node.yfix, node.theta])		
 		return np.array(BC)
-	
-	@property
-	def reducedK(self):
-		index = self.BC == 1
-		return self.K[index, :][:, index]
 	
 	def directStiffness(self, loading):
 		index = self.BC == 1
@@ -128,11 +107,5 @@ class Frame(sc.Structure):
 			node.xdef = d[3*node.n]
 			node.ydef = d[3*node.n + 1]
 			node.thetadef = d[3*node.n + 2]
-		
-# 		for i, member in enumerate(self.members):
-# 			l = member.unVec[0]
-# 			m = member.unVec[1]
-# 			ind = member.frameDoF
-# 			member.axial = member.axialstiff * np.array([l, m, -l, -m]) @ np.array(d[ind]).T
 			
 		return d
