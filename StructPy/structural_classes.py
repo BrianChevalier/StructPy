@@ -12,25 +12,28 @@ def flatten(items):
 	return sum(items, [])	
 
 class Node(object):
-			
-	def invalidFixityError(self):
-		validKeys = ', '.join([str(key) for key in self.__class__.fixities.keys()])
-		raise ValueError(f'Not a valid nodal support type. Valid types: {validKeys}')
+
+	def __init__(self, x, y, n=None, cost=0, fixity='free'):
+		self.x = x
+		self.y = y
+		self.cost = cost
+		self.n = n
+		self.fixity = fixity
 	
 	@property
 	def BC(self):
 		try:
 			return self.__class__.fixities[self.fixity]
 		except KeyError:
-			self.invalidFixityError()
+			validKeys = ', '.join([str(key) for key in self.__class__.fixities.keys()])
+			raise ValueError(f'Not a valid nodal support type. Valid types: {validKeys}')
 	
 	def __str__(self):
-		return f"({self.x:1.1f}, {self.y:1.1f})"
+		return f"{self.__class__.__name__}({self.x:1.1f}, {self.y:1.1f})"
 
 class Member(object):
-	"""
-	Define Member base class
-	"""
+	"""Define Member base class"""
+	
 	def __init__(self, SN, EN, material=ma.Steel(), cross=xs.generalSection(), expectedaxial=None):
 		self.cross = cross
 		self.material = material
@@ -40,7 +43,7 @@ class Member(object):
 		self.EN = EN
 
 		# the axial force
-		self.axial = 0
+		#self.axial = 0
 		self.expectedaxial = expectedaxial
 
 	@property
@@ -179,8 +182,8 @@ class Structure(object):
 	def isStable(self):
 		eigs, vecs = np.linalg.eig(self.reducedK)
 		if np.isclose(eigs, 0).any() == True:
-			raise ValueError('Structure is unstable.')
 			logging.warning(eigs)
+			raise ValueError('Structure is unstable.')
 	
 	def solve(self, loading):
 		"""Execute direct stiffness solving"""
@@ -190,6 +193,17 @@ class Structure(object):
 		globalD = self.BC
 		globalD[self.freeDoF] = reducedD
 		
+		return globalD
+		
+	def directStiffness(self, loading):
+		"""This executes the direct stiffness method"""
+		
+		self.isStable()
+		globalD = self.solve(loading)
+		nDoFPerNode = self.__class__.nDoFPerNode
+		for i, node in enumerate(self.nodes):
+			node.deformation = [globalD[nDoFPerNode*node.n+i] for i in range(nDoFPerNode)]
+			
 		return globalD
 		
 	def plot(self, show=True, labels=False):
@@ -208,21 +222,21 @@ class Structure(object):
 		for i, node in enumerate(self.nodes):
 			plt.scatter([node.x], [node.y], color='#000000', s=100)
 			R = 0.2*length  # length of support
-
-			if node.xfix == 0:
+			
+			if node.BC[0] == 0:
 				x1 = node.x - R
 				x2 = node.x
 				y1 = node.y
 				y2 = node.y
 				plt.plot([x1, x2], [y1, y2], color='#57d261', lw=10, zorder=-1)
 
-			if node.yfix == 0:
+			if node.BC[1] == 0:
 				x1 = node.x
 				x2 = node.x
 				y1 = node.y - R
 				y2 = node.y
 				plt.plot([x1, x2], [y1, y2], color='#57d261', lw=10, zorder=-1)
-
+		
 		for i, member in enumerate(self.members):
 			x1 = member.SN.x
 			y1 = member.SN.y

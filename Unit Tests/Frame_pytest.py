@@ -70,7 +70,7 @@ def test_6_2_5():
 	
 	assert isSymmetric(f1.K)
 	assert np.allclose(f1.reducedK, handCalc, 0.01)
-	assert f1.nodes[1].xdef == 0
-	assert approx(f1.nodes[2].thetadef, 0.01) == 6.92851 * 10**(-5)
-	assert approx(f1.nodes[1].thetadef, 0.01) == -2.63092*10**(-5)
+	assert f1.nodes[1].deformation_dict['x'] == 0
+	assert approx(f1.nodes[2].deformation_dict['θz'], 0.01) == 6.92851 * 10**(-5)
+	assert approx(f1.nodes[1].deformation_dict['θz'], 0.01) == -2.63092*10**(-5)
 	

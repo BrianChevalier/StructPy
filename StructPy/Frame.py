@@ -6,6 +6,7 @@ import numpy as np
 
 class FrameNode(sc.Node):
 	
+	DoFNames= ['x', 'y', 'θz']
 	fixities = {   # x,   y,   θ
 		'free'   :  (1.0, 1.0, 1.0),
 		'fixed'  :  (0.0, 0.0, 0.0),
@@ -15,17 +16,13 @@ class FrameNode(sc.Node):
 		'slide'  :  (0.0, 1.0, 0.0)
 	}
 	
-	def __init__(self, x, y, n=None, cost=0, fixity='free'):
-		self.x = x
-		self.y = y
-		self.cost = cost
-		self.n = n
-		self.fixity = fixity
-		
-		try:
-			self.xfix, self.yfix, self.theta = self.__class__.fixities[fixity]
-		except KeyError:
-			self.invalidFixityError()
+	@property
+	def deformation_dict(self):
+		return {
+			'x':  self.deformation[0],
+			'y':  self.deformation[1],
+			'θz': self.deformation[2]
+		}
 
 class FrameMember(sc.Member):
 	
@@ -77,14 +74,3 @@ class Frame(sc.Structure):
 	MemberType = FrameMember
 	NodeType = FrameNode
 	
-	def directStiffness(self, loading):
-		
-		self.isStable()
-		globalD = self.solve(loading)
-		
-		for i, node in enumerate(self.nodes):
-			node.xdef = globalD[3*node.n]
-			node.ydef = globalD[3*node.n + 1]
-			node.thetadef = globalD[3*node.n + 2]
-			
-		return globalD

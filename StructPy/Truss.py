@@ -7,6 +7,7 @@ import logging
 
 class TrussNode(sc.Node):
 
+	DoFNames = ['x', 'y']
 	fixities = {   # x, y
 		'free'   :  (1.0, 1.0),
 		'pin'    :  (0.0, 0.0),
@@ -14,18 +15,13 @@ class TrussNode(sc.Node):
 		'yroller':  (0.0, 1.0),
 	}
 	
-	def __init__(self, x, y, n=None, cost=0, fixity='free'):
-		self.x = x
-		self.y = y
-		self.cost = cost
-		self.n = n
-		self.fixity = fixity
-		
-		try:
-			self.xfix, self.yfix = self.__class__.fixities[fixity]
-		except KeyError:
-			self.invalidFixityError()
-
+	@property
+	def deformation_dict(self):
+		return {
+			'x':  self.deformation[0],
+			'y':  self.deformation[1]
+		}
+	
 class TrussMember(sc.Member):
 	"""
 	Define Truss Member class. Only allows axial loading.
@@ -53,7 +49,17 @@ class TrussMember(sc.Member):
 			[l, m, 0, 0],
 			[0, 0, l, m]
 		])
-
+	
+	@property
+	def axial(self):
+		l = self.unVec[0]
+		m = self.unVec[1]
+		
+		A = self.cross.A
+		E = self.material.E
+		L = self.length
+		deformation = self.SN.deformation + self.EN.deformation
+		return (A*E)/L * np.array([l, m, -l, -m]) @ np.array(deformation).T
 
 class Truss(sc.Structure):	
 	"""This class builds on the structure class adding truss methods"""
@@ -64,27 +70,3 @@ class Truss(sc.Structure):
 	MemberType = TrussMember
 	NodeType = TrussNode
 	
-	def directStiffness(self, loading):
-		"""This executes the direct stiffness method"""
-		
-		self.isStable()
-		globalD = self.solve(loading)
-				
-		for i, node in enumerate(self.nodes):
-			node.xdef = globalD[2*node.n]
-			node.ydef = globalD[2*node.n + 1]
-		
-		for i, member in enumerate(self.members):
-			
-			l = member.unVec[0]
-			m = member.unVec[1]
-			
-			ind = member.DoF
-			A = member.cross.A
-			E = member.material.E
-			L = member.length
-			
-			member.axial = (A*E)/L * np.array([l, m, -l, -m]) @ np.array(globalD[ind]).T
-			
-		return globalD
-		
