@@ -8,43 +8,24 @@ try:
 except ImportError:
 	raise ImportError('The library pyyaml is required to read a yaml file.')
 
-class Node(object):
-	"""
-	This defines the *Node* class.
-	>>> n1 = Node(0, 0)
-	>>> print(n1)
-	(0.0, 0.0)
-	>>> n1.fixity
-	'free'
-	>>> n1.cost
-	0
-	"""
-	def __init__(self, x, y, n=None, cost=0, fixity='free'):
-		self.x = x
-		self.y = y
-		self.cost = cost
-		self.n = n  # nodal number
-		self.fixity = fixity
-		
-		# 1: unrestrained, 0: restrained
-		fixities = {   # x, y, θ
-			'free'   :  (1.0, 1.0, 1.0),
-			'fixed'  :  (0.0, 0.0, 0.0),
-			'pin'    :  (0.0, 0.0, 1.0),
-			'roller' :  (1.0, 0.0, 1.0),
-			'yroller':  (0.0, 1.0, 1.0),
-			'slide'  :  (0.0, 1.0, 0.0)
-		}
-		
-		if fixity in fixities:
-			self.xfix, self.yfix, self.theta = fixities[fixity]
-		else:
-			validKeys = ', '.join([str(key) for key in fixities.keys()])
-			raise ValueError(f'Not a valid nodal support type. Valid types: {validKeys}')
+def flatten(items):
+	return sum(items, [])	
 
+class Node(object):
+			
+	def invalidFixityError(self):
+		validKeys = ', '.join([str(key) for key in self.__class__.fixities.keys()])
+		raise ValueError(f'Not a valid nodal support type. Valid types: {validKeys}')
+	
+	@property
+	def BC(self):
+		try:
+			return self.__class__.fixities[self.fixity]
+		except KeyError:
+			self.invalidFixityError()
+	
 	def __str__(self):
 		return f"({self.x:1.1f}, {self.y:1.1f})"
-
 
 class Member(object):
 	"""
@@ -85,7 +66,7 @@ class Member(object):
 	
 	@property
 	def DoF(self):
-		"""The degree of freedom numbering for the start and end nodes"""
+		"""The global degree of freedom numbering for the start and end nodes"""
 		nDoF = self.__class__.nDoFPerNode
 		return [nDoF*self.SN.n + i for i in range(nDoF)] + [nDoF*self.EN.n + i for i in range(nDoF)]
 	
@@ -148,7 +129,7 @@ class Structure(object):
 		Add node to the structure
 		"""
 		n = self.nNodes  # node number
-		node = Node(x, y, n=n, cost=cost, fixity=fixity)
+		node = self.__class__.NodeType(x, y, n=n, cost=cost, fixity=fixity)
 		self.nodes.append(node)
 		self.nNodes += 1
 	
@@ -168,12 +149,17 @@ class Structure(object):
 		self.nMembers += 1
 	
 	@property
-	def reducedK(self):
-		return self.K[np.ix_(self.freeDoF, self.freeDoF)]
+	def BC(self):
+		"""Define global boundary condition array"""
+		return np.array( flatten( [list(node.BC) for node in self.nodes] ))
 	
 	@property
 	def freeDoF(self):
 		return self.BC == 1
+	
+	@property
+	def reducedK(self):
+		return self.K[np.ix_(self.freeDoF, self.freeDoF)]
 	
 	@property
 	def nDoF(self):

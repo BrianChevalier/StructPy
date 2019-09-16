@@ -3,8 +3,29 @@ import StructPy.cross_sections as xs
 import StructPy.materials as ma
 import numpy as np
 
-def flatten(items):
-	return sum(items, [])
+
+class FrameNode(sc.Node):
+	
+	fixities = {   # x,   y,   θ
+		'free'   :  (1.0, 1.0, 1.0),
+		'fixed'  :  (0.0, 0.0, 0.0),
+		'pin'    :  (0.0, 0.0, 1.0),
+		'roller' :  (1.0, 0.0, 1.0),
+		'yroller':  (0.0, 1.0, 1.0),
+		'slide'  :  (0.0, 1.0, 0.0)
+	}
+	
+	def __init__(self, x, y, n=None, cost=0, fixity='free'):
+		self.x = x
+		self.y = y
+		self.cost = cost
+		self.n = n
+		self.fixity = fixity
+		
+		try:
+			self.xfix, self.yfix, self.theta = self.__class__.fixities[fixity]
+		except KeyError:
+			self.invalidFixityError()
 
 class FrameMember(sc.Member):
 	
@@ -54,11 +75,7 @@ class Frame(sc.Structure):
 	whatDoF = ['x', 'y', 'θz']
 	nDoFPerNode = len(whatDoF)
 	MemberType = FrameMember
-	
-	@property
-	def BC(self):
-		"""Define Boundary Condition array"""
-		return np.array( flatten( [ [node.xfix, node.yfix, node.theta] for node in self.nodes] ) )
+	NodeType = FrameNode
 	
 	def directStiffness(self, loading):
 		

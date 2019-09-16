@@ -4,8 +4,27 @@ from StructPy import materials as ma
 import numpy as np
 import logging
 
-def flatten(items):
-	return sum(items, [])
+
+class TrussNode(sc.Node):
+
+	fixities = {   # x, y
+		'free'   :  (1.0, 1.0),
+		'pin'    :  (0.0, 0.0),
+		'roller' :  (1.0, 0.0),
+		'yroller':  (0.0, 1.0),
+	}
+	
+	def __init__(self, x, y, n=None, cost=0, fixity='free'):
+		self.x = x
+		self.y = y
+		self.cost = cost
+		self.n = n
+		self.fixity = fixity
+		
+		try:
+			self.xfix, self.yfix = self.__class__.fixities[fixity]
+		except KeyError:
+			self.invalidFixityError()
 
 class TrussMember(sc.Member):
 	"""
@@ -43,11 +62,7 @@ class Truss(sc.Structure):
 	whatDoF = ['x', 'y']
 	nDoFPerNode = len(whatDoF)
 	MemberType = TrussMember
-	
-	@property
-	def BC(self):
-		"""Define Boundary Condition array"""
-		return np.array( flatten( [ [node.xfix, node.yfix] for node in self.nodes] ) )
+	NodeType = TrussNode
 	
 	def directStiffness(self, loading):
 		"""This executes the direct stiffness method"""
