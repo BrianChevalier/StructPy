@@ -8,6 +8,8 @@ def flatten(items):
 
 class FrameMember(sc.Member):
 	
+	nDoFPerNode = 3
+	
 	@property
 	def k(self):
 		"""Local member stiffness matrix"""
@@ -44,41 +46,15 @@ class FrameMember(sc.Member):
 			[0,  0, 0, -m, l, 0],
 			[0,  0, 0, 0,  0, 1]
 		])
-
-	@property
-	def DoF(self):
-		SN = self.SN.n  # this is the node number
-		EN = self.EN.n
-		
-		return [
-			3*SN, 3*SN + 1, 3*SN + 2,
-			3*EN, 3*EN + 1, 3*EN + 2
-		]
 	
 
 class Frame(sc.Structure):
 	"""Frame class"""
-	nDoFPerNode = 3
 	
-	def addMember(self, SN, EN, material=None, cross=None, expectedaxial=None):
-		"""
-		Add member to the structure
-		"""
-		SN = self.nodes[SN]
-		EN = self.nodes[EN]
-
-		if material is None:
-			material=self.defaultmaterial
-		if cross is None:
-			cross = self.defaultcross
-		
-		member = FrameMember(SN, EN, material, cross, expectedaxial=expectedaxial)
-			
-		self.members.append(member)
-		self.nMembers += 1
-
-		return member
-		
+	whatDoF = ['x', 'y', 'θz']
+	nDoFPerNode = len(whatDoF)
+	MemberType = FrameMember
+	
 	@property
 	def BC(self):
 		"""Define Boundary Condition array"""
@@ -86,11 +62,8 @@ class Frame(sc.Structure):
 	
 	def directStiffness(self, loading):
 		
-		reducedF = loading[self.unrestrainedDoF]
-		reducedD = np.linalg.solve(self.reducedK, reducedF)
-		
-		globalD = self.BC
-		globalD[self.unrestrainedDoF] = reducedD  #substitute actual deformations
+		self.isStable()
+		globalD = self.solve(loading)
 		
 		for i, node in enumerate(self.nodes):
 			node.xdef = globalD[3*node.n]

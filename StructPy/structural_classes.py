@@ -83,6 +83,12 @@ class Member(object):
 		"""
 		return self.T.T @ self.k @ self.T
 	
+	@property
+	def DoF(self):
+		"""The degree of freedom numbering for the start and end nodes"""
+		nDoF = self.__class__.nDoFPerNode
+		return [nDoF*self.SN.n + i for i in range(nDoF)] + [nDoF*self.EN.n + i for i in range(nDoF)]
+	
 	def __repr__(self):
 		return f'{self.__class__.__name__}({self.SN}, {self.EN})'
 
@@ -145,29 +151,61 @@ class Structure(object):
 		node = Node(x, y, n=n, cost=cost, fixity=fixity)
 		self.nodes.append(node)
 		self.nNodes += 1
+	
+	def addMember(self, SN, EN, material=None, cross=None, expectedaxial=None):
+		"""Add member to the structure"""
+		SN = self.nodes[SN]
+		EN = self.nodes[EN]
 
-		return node
+		if material is None:
+			material=self.defaultmaterial
+		if cross is None:
+			cross = self.defaultcross
+		
+		member = self.__class__.MemberType(SN, EN, material, cross, expectedaxial=expectedaxial)
+		
+		self.members.append(member)
+		self.nMembers += 1
 	
 	@property
 	def reducedK(self):
-		return self.K[self.unrestrainedDoF, :][:, self.unrestrainedDoF]
+		return self.K[np.ix_(self.freeDoF, self.freeDoF)]
 	
 	@property
-	def unrestrainedDoF(self):
+	def freeDoF(self):
 		return self.BC == 1
+	
+	@property
+	def nDoF(self):
+		return self.__class__.nDoFPerNode * self.nNodes
 	
 	@property
 	def K(self):
 		"""Build global structure stiffness matrix"""
 		
-		global_nDoF = self.__class__.nDoFPerNode * self.nNodes
-		K = np.zeros([global_nDoF, global_nDoF])
+		K = np.zeros([self.nDoF, self.nDoF])
 		
 		for member in self.members:
 			K[np.ix_(member.DoF, member.DoF)] += member.kglobal
 		
 		return K
 	
+	def isStable(self):
+		eigs, vecs = np.linalg.eig(self.reducedK)
+		if np.isclose(eigs, 0).any() == True:
+			raise ValueError('Structure is unstable.')
+			logging.warning(eigs)
+	
+	def solve(self, loading):
+		"""Execute direct stiffness solving"""
+		reducedF = loading[self.freeDoF]
+		reducedD = np.linalg.solve(self.reducedK, reducedF)
+		
+		globalD = self.BC
+		globalD[self.freeDoF] = reducedD
+		
+		return globalD
+		
 	def plot(self, show=True, labels=False):
 		"""
 		Plot the undeformed structure
@@ -245,4 +283,3 @@ class Structure(object):
 			string = 'Member %i: (%i --> %i), L = %.1f, f = %.2f'
 			variables = (i, member.SN.n, member.EN.n, member.length, member.axial)
 			print(string % variables)
-

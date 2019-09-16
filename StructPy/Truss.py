@@ -12,16 +12,14 @@ class TrussMember(sc.Member):
 	Define Truss Member class. Only allows axial loading.
 	"""
 	
+	nDoFPerNode = 2
+	
 	@property
 	def k(self):
 		"""Local member stiffness matrix"""
-		# direct stiffness method
 
-		L = self.length
-		E = self.material.E
-		A = self.cross.A
-		a = (A*E)/L
-
+		a = (self.cross.A * self.material.E)/self.length
+		
 		return a * np.array([
 			[1, -1],
 			[-1, 1]
@@ -37,62 +35,25 @@ class TrussMember(sc.Member):
 			[0, 0, l, m]
 		])
 
-	@property
-	def DoF(self):
-		SN = self.SN.n  # this is the node number
-		EN = self.EN.n
-		
-		return [
-			SN*2, SN*2 + 1,
-			EN*2, EN*2 + 1
-		]
-
 
 class Truss(sc.Structure):	
-	"""This class builds on the structure class adding truss solving 
-	methods"""
+	"""This class builds on the structure class adding truss methods"""
 	
 	#Number of degrees of freedom for this structure type in the global coordinate system
-	nDoFPerNode = 2
+	whatDoF = ['x', 'y']
+	nDoFPerNode = len(whatDoF)
+	MemberType = TrussMember
 	
-	def addMember(self, SN, EN, material=None, cross=None, expectedaxial=None):
-		"""
-		Add member to the structure
-		"""
-		SN = self.nodes[SN]
-		EN = self.nodes[EN]
-
-		if material is None:
-			material=self.defaultmaterial
-		if cross is None:
-			cross = self.defaultcross
-		
-		member = TrussMember(SN, EN, material, cross, expectedaxial=expectedaxial)
-			
-		self.members.append(member)
-		self.nMembers += 1
-
-		return member
-
 	@property
 	def BC(self):
 		"""Define Boundary Condition array"""
 		return np.array( flatten( [ [node.xfix, node.yfix] for node in self.nodes] ) )
 	
 	def directStiffness(self, loading):
-		"""This executes the direct stiffness method 
-		for the structure given some loading"""
+		"""This executes the direct stiffness method"""
 		
-		eigs, vecs = np.linalg.eig(self.reducedK)
-		if np.isclose(eigs, 0).any() == True:
-			raise ValueError('Structure is unstable.')
-			logging.warning(eigs)
-		
-		reducedF = loading[self.unrestrainedDoF]
-		reducedD = np.linalg.solve(self.reducedK, reducedF)
-		
-		globalD = self.BC
-		globalD[self.unrestrainedDoF] = reducedD
+		self.isStable()
+		globalD = self.solve(loading)
 				
 		for i, node in enumerate(self.nodes):
 			node.xdef = globalD[2*node.n]
