@@ -66,7 +66,7 @@ class FrameMember(sc.Member):
 		])
 	
 
-class Frame(sc.Structure):
+class Frame(sc.Structure, sc.Planar):
 	"""Frame class"""
 	
 	whatDoF = ['x', 'y', 'θz']

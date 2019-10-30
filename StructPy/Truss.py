@@ -61,7 +61,7 @@ class TrussMember(sc.Member):
 		deformation = self.SN.deformation + self.EN.deformation
 		return (A*E)/L * np.array([l, m, -l, -m]) @ np.array(deformation).T
 
-class Truss(sc.Structure):	
+class Truss(sc.Structure, sc.Planar):	
 	"""This class builds on the structure class adding truss methods"""
 	
 	#Number of degrees of freedom for this structure type in the global coordinate system

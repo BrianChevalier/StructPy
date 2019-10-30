@@ -81,12 +81,19 @@ class Structure(object):
 	"""
 	Abstract base class for Truss and Frame classes.
 	"""
-	def __init__(self, cross=None, material=None):
+	def __init__(self, cross=None, material=None, withCaching=True):
 		self.members = []
 		self.nodes = []
 		self.nNodes = 0
 		self.nMembers = 0
-
+		
+		# Some quantities are expensive to compute, and we want to cache them if nothing about the
+		# structure has changed. This flag tells us if the cache is valid. Toggle the flag
+		# to invalidate the cache to force a recompute on next call to relevant property
+		self._reducedK_cache = None
+		self._K_cache = None
+		self.withCaching = withCaching
+		
 		if cross is None or material is None:
 			raise ValueError('Please define default cross section or material type.')
 		else:
@@ -135,6 +142,8 @@ class Structure(object):
 		node = self.__class__.NodeType(x, y, n=n, cost=cost, fixity=fixity)
 		self.nodes.append(node)
 		self.nNodes += 1
+		self._reducedK_cache = None
+		self._K_cache = None
 	
 	def addMember(self, SN, EN, material=None, cross=None, expectedaxial=None):
 		"""Add member to the structure"""
@@ -150,6 +159,8 @@ class Structure(object):
 		
 		self.members.append(member)
 		self.nMembers += 1
+		self._reducedK_cache = None
+		self._K_cache = None
 	
 	@property
 	def BC(self):
@@ -162,6 +173,13 @@ class Structure(object):
 	
 	@property
 	def reducedK(self):
+		if (self._reducedK_cache is not None) and (self.withCaching == True):
+			return self._reducedK_cache
+		else:
+			self._reducedK_cache = self._reducedK()
+			return self._reducedK_cache
+	
+	def _reducedK(self):
 		return self.K[np.ix_(self.freeDoF, self.freeDoF)]
 	
 	@property
@@ -170,6 +188,15 @@ class Structure(object):
 	
 	@property
 	def K(self):
+		if (self._K_cache is not None) and (self.withCaching == True):
+			return self._K_cache
+		else:
+			self._cacheIsValid = True
+			self._K_cache = self._K()
+			return self._K_cache
+			
+		
+	def _K(self):
 		"""Build global structure stiffness matrix"""
 		
 		K = np.zeros([self.nDoF, self.nDoF])
@@ -180,6 +207,7 @@ class Structure(object):
 		return K
 	
 	def isStable(self):
+		"""Check stability"""
 		eigs, vecs = np.linalg.eig(self.reducedK)
 		if np.isclose(eigs, 0).any() == True:
 			logging.warning(eigs)
@@ -205,7 +233,13 @@ class Structure(object):
 			node.deformation = [globalD[nDoFPerNode*node.n+i] for i in range(nDoFPerNode)]
 			
 		return globalD
-		
+
+class Planar(object):
+	
+	"""
+	Methods associated with planar truss/frames
+	"""
+	
 	def plot(self, show=True, labels=False):
 		"""
 		Plot the undeformed structure
