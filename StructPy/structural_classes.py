@@ -2,6 +2,7 @@ from StructPy import cross_sections as xs
 from StructPy import materials as ma
 import matplotlib.pyplot as plt
 import numpy as np
+from StructPy.Caching import cached_property
 
 try:
 	import yaml
@@ -87,11 +88,6 @@ class Structure(object):
 		self.nNodes = 0
 		self.nMembers = 0
 		
-		# Some quantities are expensive to compute, and we want to cache them if nothing about the
-		# structure has changed. This flag tells us if the cache is valid. Toggle the flag
-		# to invalidate the cache to force a recompute on next call to relevant property
-		self._reducedK_cache = None
-		self._K_cache = None
 		self.withCaching = withCaching
 		
 		if cross is None or material is None:
@@ -142,8 +138,10 @@ class Structure(object):
 		node = self.__class__.NodeType(x, y, n=n, cost=cost, fixity=fixity)
 		self.nodes.append(node)
 		self.nNodes += 1
-		self._reducedK_cache = None
-		self._K_cache = None
+		
+		#invalidate cached quantities
+		self.__cache__reducedK = None
+		self.__cache__K = None
 	
 	def addMember(self, SN, EN, material=None, cross=None, expectedaxial=None):
 		"""Add member to the structure"""
@@ -159,8 +157,10 @@ class Structure(object):
 		
 		self.members.append(member)
 		self.nMembers += 1
-		self._reducedK_cache = None
-		self._K_cache = None
+		
+		#invalidate cached quantities
+		self.__cache__reducedK = None
+		self.__cache__K = None
 	
 	@property
 	def BC(self):
@@ -171,32 +171,16 @@ class Structure(object):
 	def freeDoF(self):
 		return self.BC == 1
 	
-	@property
+	@cached_property
 	def reducedK(self):
-		if (self._reducedK_cache is not None) and (self.withCaching == True):
-			return self._reducedK_cache
-		else:
-			self._reducedK_cache = self._reducedK()
-			return self._reducedK_cache
-	
-	def _reducedK(self):
 		return self.K[np.ix_(self.freeDoF, self.freeDoF)]
 	
 	@property
 	def nDoF(self):
 		return self.__class__.nDoFPerNode * self.nNodes
-	
-	@property
-	def K(self):
-		if (self._K_cache is not None) and (self.withCaching == True):
-			return self._K_cache
-		else:
-			self._cacheIsValid = True
-			self._K_cache = self._K()
-			return self._K_cache
-			
 		
-	def _K(self):
+	@cached_property
+	def K(self):
 		"""Build global structure stiffness matrix"""
 		
 		K = np.zeros([self.nDoF, self.nDoF])
