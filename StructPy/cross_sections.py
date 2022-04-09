@@ -276,7 +276,7 @@ class HSS(Section):
 
 	@property
 	def A(self):
-		return self.B * self.H - self.b - self.h
+		return self.B * self.H - self.b * self.h
 
 	@property
 	def Ix(self):
