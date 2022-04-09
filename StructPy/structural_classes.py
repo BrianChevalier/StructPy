@@ -277,13 +277,17 @@ class Planar(object):
 		self.plot(show=False)
 
 		for i, node in enumerate(self.nodes):
-			plt.scatter([node.x + scale*node.xdef], [node.y + scale*node.ydef], color='#d80000', s=100)
+			plt.scatter(
+				[node.x + scale*node.deformation_dict.get('x')],
+				[node.y + scale*node.deformation_dict.get('y')],
+				color='#d80000',
+				s=100)
 
 		for i, member in enumerate(self.members):
-			x1 = member.SN.x + scale*member.SN.xdef
-			y1 = member.SN.y + scale*member.SN.ydef
-			x2 = member.EN.x + scale*member.EN.xdef
-			y2 = member.EN.y + scale*member.EN.ydef
+			x1 = member.SN.x + scale*member.SN.deformation_dict.get('x')
+			y1 = member.SN.y + scale*member.SN.deformation_dict.get('y')
+			x2 = member.EN.x + scale*member.EN.deformation_dict.get('x')
+			y2 = member.EN.y + scale*member.EN.deformation_dict.get('y')
 			plt.plot([x1, x2], [y1, y2], '--', color='#b83939', lw=2, zorder=-1)
 		plt.title(f"Truss Deformation Plot (scale: {scale}X)")
 		plt.show()
